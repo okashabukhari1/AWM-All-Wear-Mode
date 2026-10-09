@@ -1,0 +1,421 @@
+{
+  "mobile": [
+    {
+      "overflow": 0,
+      "path": "/men",
+      "title": "The men’s edit."
+    },
+    {
+      "overflow": 0,
+      "path": "/women",
+      "title": "The women’s edit."
+    },
+    {
+      "overflow": 0,
+      "path": "/new-arrivals",
+      "title": "New in. Now you."
+    },
+    {
+      "overflow": 0,
+      "path": "/trending",
+      "title": "In good company."
+    },
+    {
+      "overflow": 0,
+      "path": "/collections/streetwear",
+      "title": "streetwear."
+    },
+    {
+      "overflow": 0,
+      "path": "/product/mens-heavyweight-box-tee",
+      "title": "Men’s Heavyweight Box Tee"
+    },
+    {
+      "overflow": 0,
+      "path": "/search",
+      "title": "Find your mode."
+    },
+    {
+      "overflow": 0,
+      "path": "/wishlist",
+      "title": "Saved for later."
+    },
+    {
+      "overflow": 0,
+      "path": "/cart",
+      "title": "Your next favourite is waiting."
+    },
+    {
+      "overflow": 0,
+      "path": "/checkout",
+      "title": "Your next favourite is waiting."
+    },
+    {
+      "overflow": 0,
+      "path": "/login",
+      "title": "Your world.Your mode."
+    },
+    {
+      "overflow": 0,
+      "path": "/register",
+      "title": "Your world.Your mode."
+    },
+    {
+      "overflow": 0,
+      "path": "/account",
+      "title": "Hello, AWM."
+    },
+    {
+      "overflow": 0,
+      "path": "/account/orders",
+      "title": "Your orders."
+    },
+    {
+      "overflow": 0,
+      "path": "/about",
+      "title": "Every style.Every mood.Every mode."
+    },
+    {
+      "overflow": 0,
+      "path": "/contact",
+      "title": "Let’s talk."
+    },
+    {
+      "overflow": 0,
+      "path": "/faq",
+      "title": "Good questions."
+    },
+    {
+      "overflow": 0,
+      "path": "/shipping-returns",
+      "title": "From us.To you."
+    },
+    {
+      "overflow": 0,
+      "path": "/privacy-policy",
+      "title": "Your data."
+    },
+    {
+      "overflow": 0,
+      "path": "/terms",
+      "title": "The small print."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin",
+      "title": "A good overview."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/products",
+      "title": "The product edit."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/inventory",
+      "title": "Room for more."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/orders",
+      "title": "Every order, considered."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/customers",
+      "title": "People behind the pieces."
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/products/new",
+      "title": "A new perspective."
+    }
+  ],
+  "desktop": [
+    {
+      "overflow": 0,
+      "path": "/men"
+    },
+    {
+      "overflow": 0,
+      "path": "/women"
+    },
+    {
+      "overflow": 0,
+      "path": "/new-arrivals"
+    },
+    {
+      "overflow": 0,
+      "path": "/trending"
+    },
+    {
+      "overflow": 0,
+      "path": "/collections/streetwear"
+    },
+    {
+      "overflow": 0,
+      "path": "/product/mens-heavyweight-box-tee"
+    },
+    {
+      "overflow": 0,
+      "path": "/search"
+    },
+    {
+      "overflow": 0,
+      "path": "/wishlist"
+    },
+    {
+      "overflow": 0,
+      "path": "/cart"
+    },
+    {
+      "overflow": 0,
+      "path": "/checkout"
+    },
+    {
+      "overflow": 0,
+      "path": "/login"
+    },
+    {
+      "overflow": 0,
+      "path": "/register"
+    },
+    {
+      "overflow": 0,
+      "path": "/account"
+    },
+    {
+      "overflow": 0,
+      "path": "/account/orders"
+    },
+    {
+      "overflow": 0,
+      "path": "/about"
+    },
+    {
+      "overflow": 0,
+      "path": "/contact"
+    },
+    {
+      "overflow": 0,
+      "path": "/faq"
+    },
+    {
+      "overflow": 0,
+      "path": "/shipping-returns"
+    },
+    {
+      "overflow": 0,
+      "path": "/privacy-policy"
+    },
+    {
+      "overflow": 0,
+      "path": "/terms"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/products"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/inventory"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/orders"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/customers"
+    },
+    {
+      "overflow": 0,
+      "path": "/admin/products/new"
+    }
+  ],
+  "home": [
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 320
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 375
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 390
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 430
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 768
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 1024
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 1280
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 1440
+    },
+    {
+      "frames": 0,
+      "overflow": 0,
+      "quoteOverflow": false,
+      "width": 1920
+    }
+  ],
+  "links": [
+    "#main",
+    "/",
+    "/men",
+    "/women",
+    "/new-arrivals",
+    "/trending",
+    "/account",
+    "/wishlist",
+    "/product/mens-heavyweight-box-tee",
+    "/product/mens-studio-oxford-shirt",
+    "/product/mens-straight-leg-denim",
+    "/product/mens-pleated-studio-trousers",
+    "/product/mens-city-utility-jacket",
+    "/product/mens-signature-box-hoodie",
+    "/product/mens-everyday-rib-tee",
+    "/product/mens-relaxed-cotton-tee",
+    "/product/mens-essential-crew-tee",
+    "/product/mens-everyday-poplin-shirt",
+    "/product/mens-relaxed-linen-shirt",
+    "/product/mens-weekend-overshirt",
+    "/product/mens-wide-leg-denim",
+    "/product/mens-washed-denim",
+    "/product/mens-everyday-cargo-pants",
+    "/product/mens-relaxed-tailored-trousers",
+    "/product/mens-everyday-chinos",
+    "/product/mens-wide-leg-trousers",
+    "/product/mens-weekend-denim-jacket",
+    "/product/mens-lightweight-layer",
+    "/product/mens-everyday-zip-jacket",
+    "/product/mens-off-duty-sweatshirt",
+    "/product/mens-oversized-fleece-hoodie",
+    "/product/mens-studio-sweatshirt",
+    "/contact",
+    "/about",
+    "/faq",
+    "/shipping-returns",
+    "/account/orders",
+    "/admin",
+    "/contact?platform=Instagram",
+    "/contact?platform=TikTok",
+    "/contact?platform=Facebook",
+    "/privacy-policy",
+    "/terms",
+    "/product/womens-heavyweight-box-tee",
+    "/product/womens-studio-oxford-shirt",
+    "/product/womens-straight-leg-denim",
+    "/product/womens-pleated-studio-trousers",
+    "/product/womens-city-utility-jacket",
+    "/product/womens-signature-box-hoodie",
+    "/product/womens-everyday-rib-tee",
+    "/product/womens-relaxed-cotton-tee",
+    "/product/womens-essential-crew-tee",
+    "/product/womens-everyday-poplin-shirt",
+    "/product/womens-relaxed-linen-shirt",
+    "/product/womens-weekend-overshirt",
+    "/product/womens-wide-leg-denim",
+    "/product/womens-washed-denim",
+    "/product/womens-everyday-cargo-pants",
+    "/product/womens-relaxed-tailored-trousers",
+    "/product/womens-everyday-chinos",
+    "/product/womens-wide-leg-trousers",
+    "/product/womens-weekend-denim-jacket",
+    "/product/womens-lightweight-layer",
+    "/product/womens-everyday-zip-jacket",
+    "/product/womens-off-duty-sweatshirt",
+    "/product/womens-oversized-fleece-hoodie",
+    "/product/womens-studio-sweatshirt",
+    "/register",
+    "/login",
+    "/account/orders/AWM-MV1GU1YG",
+    "/admin/products",
+    "/admin/orders",
+    "/admin/inventory",
+    "/admin/customers",
+    "/admin/products/p1/edit",
+    "/admin/products/p12/edit",
+    "/admin/products/p23/edit",
+    "/admin/products/p34/edit",
+    "/admin/products/p45/edit",
+    "/admin/products/new",
+    "/admin/products/p2/edit",
+    "/admin/products/p3/edit",
+    "/admin/products/p4/edit",
+    "/admin/products/p5/edit",
+    "/admin/products/p6/edit",
+    "/admin/products/p7/edit",
+    "/admin/products/p8/edit",
+    "/admin/products/p9/edit",
+    "/admin/products/p10/edit",
+    "/admin/products/p11/edit",
+    "/admin/products/p13/edit",
+    "/admin/products/p14/edit",
+    "/admin/products/p15/edit",
+    "/admin/products/p16/edit",
+    "/admin/products/p17/edit",
+    "/admin/products/p18/edit",
+    "/admin/products/p19/edit",
+    "/admin/products/p20/edit",
+    "/admin/products/p21/edit",
+    "/admin/products/p22/edit",
+    "/admin/products/p24/edit",
+    "/admin/products/p25/edit",
+    "/admin/products/p26/edit",
+    "/admin/products/p27/edit",
+    "/admin/products/p28/edit",
+    "/admin/products/p29/edit",
+    "/admin/products/p30/edit",
+    "/admin/products/p31/edit",
+    "/admin/products/p32/edit",
+    "/admin/products/p33/edit",
+    "/admin/products/p35/edit",
+    "/admin/products/p36/edit",
+    "/admin/products/p37/edit",
+    "/admin/products/p38/edit",
+    "/admin/products/p39/edit",
+    "/admin/products/p40/edit",
+    "/admin/products/p41/edit",
+    "/admin/products/p42/edit",
+    "/admin/products/p43/edit",
+    "/admin/products/p44/edit",
+    "/admin/products/p46/edit",
+    "/admin/products/p47/edit",
+    "/admin/products/p48/edit"
+  ]
+}

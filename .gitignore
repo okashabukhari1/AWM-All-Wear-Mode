@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.local
+.qa/
+.npm-cache/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+dataaa/*.zip
+dataaa/**/* - Copy.*

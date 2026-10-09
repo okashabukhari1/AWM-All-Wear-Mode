@@ -1,0 +1,309 @@
+
+/* One spacing rhythm across the storefront,
+without empty section padding. */
+:root {
+  --gutter: clamp(20px, 4vw, 80px);
+  --section-space: clamp(40px, 5vw, 72px);
+}
+#perspective { scroll-margin-top: 110px; }
+.section-padding {
+  padding: var(--section-space) var(--gutter);
+}
+.intro,
+.manifesto {
+  padding-block: var(--section-space);
+}
+.intro > .eyebrow,
+.manifesto > .eyebrow,
+.brand-story > .eyebrow {
+  margin-bottom: 28px;
+}
+.intro-grid {
+  gap: 8%;
+}
+.intro-grid > div p {
+  margin-bottom: 16px;
+}
+.collection-panel {
+  height: clamp(440px, 48vw, 620px);
+}
+.collection-panel > div {
+  bottom: 32px;
+}
+.manifesto-bottom {
+  margin-top: 36px;
+}
+.signature {
+  min-height: clamp(480px, 46vw, 640px);
+}
+.signature-image {
+  min-height: 480px;
+}
+.signature-photo {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  max-height: none;
+}
+.signature-copy,
+.lookbook-copy {
+  padding: 48px 9%;
+}
+.signature-copy .eyebrow,
+.lookbook-copy > .eyebrow {
+  margin-bottom: 26px;
+}
+.signature-copy > p:not(.eyebrow) {
+  margin: 22px 0;
+}
+.signature-copy .arrow-link {
+  margin-top: 12px;
+}
+.section-heading {
+  margin-bottom: 28px;
+  gap: 20px;
+}
+.section-heading .eyebrow {
+  margin-bottom: 12px;
+}
+.lookbook-image {
+  height: 640px;
+}
+.look-tabs {
+  margin: 26px 0 22px;
+}
+.campaign {
+  height: clamp(500px, 51vw, 700px);
+}
+.campaign > div {
+  padding: 64px var(--gutter);
+}
+.campaign h2 {
+  margin: 36px 0 32px;
+}
+.brand-bottom {
+  margin-top: 32px;
+}
+.catalog-hero {
+  min-height: 320px;
+}
+.catalog-hero > div {
+  padding: 40px max(5%, var(--gutter));
+}
+.catalog-hero h1 {
+  margin: 24px 0 18px;
+}
+.catalog-hero > img {
+  height: 320px;
+}
+.catalog-hero.search-hero {
+  min-height: 260px;
+}
+.category-tabs {
+  padding-inline: var(--gutter);
+  gap: 26px;
+}
+.category-tabs > button {
+  padding-block: 19px;
+}
+.catalog-body {
+  padding: 28px var(--gutter) var(--section-space);
+}
+.catalog-toolbar {
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+.product-grid {
+  gap: 30px 20px;
+}
+.product-page .breadcrumbs {
+  padding: 20px var(--gutter);
+}
+.product-detail {
+  gap: 5%;
+  padding-inline: var(--gutter);
+  padding-bottom: 40px;
+}
+.product-information {
+  top: 110px;
+  padding-top: 8px;
+}
+.product-information h1 {
+  margin: 16px 0;
+}
+.product-description {
+  margin: 20px 0;
+}
+.shopping-page > h1,
+.account-page > h1 {
+  margin: 22px 0 30px;
+}
+.checkout-grid {
+  gap: 5%;
+}
+.auth-page {
+  min-height: 580px;
+}
+.auth-story,
+.auth-form {
+  padding: 48px 9%;
+}
+.auth-story h2 {
+  margin: 26px 0;
+}
+.auth-story .mini-wordmark {
+  margin-top: 40px;
+}
+.auth-form form {
+  gap: 20px;
+}
+.info-page > h1 {
+  margin: 24px 0;
+}
+.info-page.narrow {
+  min-height: 0;
+}
+.info-page > h2,
+.info-page > section > h2 {
+  margin: 30px 0 16px;
+}
+.info-page > details {
+  padding: 22px 0;
+}
+.contact-grid {
+  margin-top: 32px;
+  gap: 8%;
+}
+.contact-grid form {
+  gap: 20px;
+}
+.about-hero img {
+  height: 440px;
+}
+.confirmation-details {
+  margin-block: 28px;
+}
+.empty {
+  padding-block: 40px;
+}
+.admin-main {
+  padding: 32px;
+}
+.admin-panel {
+  padding: 22px;
+}
+@media (max-width: 1100px) {
+.signature-copy,
+.lookbook-copy {
+    padding: 40px 8%;
+  }
+.lookbook-image {
+    height: 600px;
+  }
+}
+@media (max-width: 800px) {
+.signature-copy,
+.lookbook-copy {
+    padding: 36px 7%;
+  }
+.lookbook-image {
+    height: 560px;
+  }
+.cinema-hero {
+    min-height: 540px;
+  }
+.product-information {
+    position: relative;
+    top: 0;
+  }
+.catalog-hero > div {
+    padding: 36px 8%;
+  }
+.admin-main {
+    padding: 28px var(--gutter);
+  }
+}
+@media (max-width: 560px) {
+.collection-panel {
+    height: 460px;
+  }
+.collection-panel > div {
+    bottom: 28px;
+  }
+.signature {
+    min-height: 0;
+  }
+.signature-image {
+    min-height: 0;
+    height: 380px;
+  }
+.signature-copy,
+.lookbook-copy {
+    padding: 36px var(--gutter);
+  }
+.signature-copy .eyebrow,
+.lookbook-copy > .eyebrow {
+    margin-bottom: 22px;
+  }
+.lookbook-image {
+    height: 430px;
+  }
+.look-tabs {
+    margin: 24px 0 20px;
+  }
+.campaign {
+    height: 530px;
+  }
+.campaign > div {
+    padding: 48px var(--gutter);
+  }
+.campaign h2 {
+    margin: 30px 0;
+  }
+.brand-bottom {
+    gap: 24px;
+  }
+.catalog-hero {
+    min-height: 260px;
+  }
+.catalog-hero > div {
+    padding: 30px var(--gutter);
+  }
+.catalog-hero > img {
+    height: 100%;
+    min-height: 260px;
+  }
+.catalog-hero h1 {
+    margin: 22px 0 16px;
+  }
+.catalog-hero.search-hero {
+    min-height: 260px;
+  }
+.product-grid,
+.new-drop-grid {
+    gap: 24px 12px;
+  }
+.section-heading {
+    gap: 14px;
+  }
+.product-rail {
+    margin-right: 0;
+    padding-right: 0;
+  }
+.auth-story,
+.auth-form {
+    padding: 36px var(--gutter);
+  }
+.auth-page {
+    min-height: 0;
+  }
+.contact-grid {
+    gap: 30px;
+  }
+.about-hero img {
+    height: 380px;
+  }
+.cinema-hero {
+    min-height: 580px;
+  }
+}

@@ -1,0 +1,80 @@
+# AWM — All Wear Mode
+
+A React + TypeScript client-pitch fashion storefront. The visual direction combines oversized editorial typography, warm monochrome photography, and scroll-controlled fashion scenes with a practical shopping experience.
+
+## Run locally
+
+Requires Node.js 20.19+ or 22.12+.
+
+```sh
+npm install
+npm run dev
+```
+
+Open the Local URL printed by Vite. Production verification:
+
+```sh
+npm test
+npm run build
+npm run preview
+```
+
+Executed checks and their limits are recorded in [docs/QA.md](docs/QA.md). Saved preview captures: [desktop](docs/awm-desktop.jpg) and [mobile](docs/awm-mobile.jpg).
+
+## Stack and structure
+
+- React 19, TypeScript, Vite, Tailwind CSS 4
+- GSAP / ScrollTrigger, Lenis, React Router, Lucide, Zustand persist
+- `src/data.ts`: 48 products, per-size/per-colour stock, centralized imagery
+- `src/store.ts`: inventory, cart, wishlist, demo sessions and orders
+- `src/components.tsx`: accessible dialogs, navigation, product cards, cart drawer
+- `src/pages`: homepage, shopping, account, information, and demo admin
+- `src/styles.css`: shared editorial design system and responsive styles
+
+All requested storefront routes are implemented, including the dynamic collection, product, and order routes. The admin has dashboard, product CRUD, variant inventory, order management, and fictitious customer profiles. Open `/admin` directly or use the footer link. No administrator sign-in is required; the admin is visibly a local demo.
+
+## Demo flows
+
+1. Select a piece, colour, and size; add it to your bag.
+2. Change quantities in the drawer or `/cart`. Stock checks apply to each variant.
+3. Enter **fictitious** checkout details. Cash on Delivery and Online Payment are both simulations, with no card fields.
+4. Place a demo order. The app snapshots product details, reduces variant inventory, clears the bag, and displays an order reference.
+5. View `/account/orders`. Guest mode shows orders on this device; demo sign-in filters history by the entered email.
+6. Update status in `/admin/orders`; the customer tracking view reflects it.
+7. Add or edit products and inventory in admin; the storefront uses the same data immediately.
+
+The cart, wishlist, catalogue edits, profiles, session, and orders persist under `awm-demo-v1` in LocalStorage. Clear site data in the browser to reset the demo. The newsletter and contact form display acknowledgements; they do not submit or send anything. Social links lead to a prefilled contact enquiry for the official profile URL; verified AWM social URLs have not been supplied.
+
+## Motion and accessibility
+
+GSAP is the primary animation engine. The homepage uses one pinned master timeline and a persistent transparent canvas: a quiet opening wordmark and a central walking sequence, then a minimal peach editorial campaign. The outfit has no animated X/Y translation, scale, or top change: scrolling only advances its source pose. Masked “YOUR MODE” lines, a soft circle reveal, and short shopping links provide the surrounding motion. The two outline frame elements and connector have been removed. Scrolling controls the source walking frames in either direction; there is no independent playback. The previous introduction overlay and signature pin have been replaced. A new skippable, session-scoped brand preloader measures the first/last hero image requests and font readiness; it does not wait for the entire frame sequence or invent progress. Failed assets and stalled requests can bypass it. Reduced motion bypasses it immediately. The shared SiteMotion component gives lazy routes, newly inserted catalogue results, typography, images, cards, forms, account/admin panels, navigation, newsletter and footer elements GSAP entrances and icon interactions. IntersectionObserver limits entrances to visible content; matchMedia cleanup supports live reduced-motion changes. Accordion answers and dialogs have their own entrances. The homepage retains manifesto motion and campaign parallax.
+
+`src/components/home/WalkingOutfitSequence.tsx` loads first/current/last and spaced critical poses with four concurrent requests, then progressively loads the remaining images. It draws only when the pose or canvas dimensions change, caps DPR at 2, and cancels requests/observers on unmount. Desktop uses 180 poses; mobile uses 91 sampled poses at 239 × 480 to reduce decoded memory and transfer. The component responds to viewport changes. Reduced motion shows a static final frame and both shopping links without a pin or canvas loader.
+
+Run `python scripts/process-walk.py` with Pillow and NumPy to reproduce the assets from the supplied JPEGs. The script sorts numeric filenames (the source skips 179), creates one shared crop, chroma-keys to genuine alpha, removes green spill, and uses lossless WebP when lossy edge colours fail validation. Mobile edges use lossless WebP. A six-pose light/dark contact sheet is saved to `docs/walk-alpha-proof.jpg`. **The source contains visible forearms and hands, which are preserved; it is not a fully invisible mannequin.**
+
+GSAP contexts and Lenis ticker subscriptions are cleaned up. Dialogs render in a body portal so transformed cards cannot clip them. They handle Escape, focus trapping, focus restoration, and body scrolling. Navigation and forms have labels and visible focus states.
+
+Product cards have rounded surfaces, image gradients, wishlist controls, actual colour selection and a size-selected quick-add flow. The round testimonial carousel adapts the supplied Originkit geometry with perspective, rotation, drag momentum, keyboard navigation, pause controls and a static reduced-motion mode. Its quotes are explicitly labelled fictional samples. The black footer follows the supplied noth.in reference composition using original AWM copy and an oversized AWM wordmark.
+
+Current visual captures: [desktop hero](docs/awm-minimal-hero-desktop.jpg), [mobile hero](docs/awm-minimal-hero-mobile.jpg), [footer](docs/awm-refined-footer-desktop.jpg), and [testimonials](docs/awm-refined-testimonials-desktop.jpg).
+
+## Image and font references
+
+Images are stock/editorial **references**, served from Unsplash via stable photo URLs centralized in `src/data.ts`. Product photos are grouped by clothing category and are intentionally illustrative; several catalogue entries reuse references. Exact garment identity, material specifications, fit, and colour photography are not asserted. Replace with brand-owned or approved SKU photography before presenting as a real inventory catalogue. The outfit explorer is illustrative styling rather than an exact matched purchasable outfit.
+
+Unsplash licence: https://unsplash.com/license
+
+Additional womenswear image references: [white tee, Brian Wangenheim](https://unsplash.com/photos/woman-in-white-t-shirt-zG1c8Q6H9C8), [shirt and trousers, Jennifer mela444](https://unsplash.com/photos/woman-in-white-shirt-and-beige-pants-zRUP4LrIn68), [neutral layer and denim, Juan Ordonez](https://unsplash.com/photos/woman-in-beige-long-sleeve-shirt-and-gray-denim-jeans-leaning-on-glass-wall-NGAwzpvEzXQ). These published photo pages identify the images as available under the Unsplash License. Responsive sources are delivered through a shared `Image` component, with an explicit local editorial-reference fallback if a remote image cannot load.
+
+Fonts: Space Grotesk, DM Sans, and DM Serif Display from Google Fonts. External image/font requests require network access; self-host licensed production assets for offline reliability. No competitor branding or assets are copied.
+
+## Vercel
+
+Import this directory as a Vite project. Build command: `npm run build`. Output directory: `dist`. `vercel.json` provides SPA routing for direct deep links. No environment variables or credentials are needed. This task prepares deployment; it does not publish a real shop.
+
+`robots.txt` blocks crawling because this is a demo. Page titles and descriptions update on navigation; Open Graph defaults are included. This client-rendered prototype does not claim full production SEO. For a real launch add a verified canonical domain, SKU metadata, generated sitemap, server-rendered product information, and intentional robots rules.
+
+## Production boundaries
+
+No backend, database, real authentication, email provider, payment processor, shipping integration, or secure admin authorization exists. LocalStorage can be edited and is not protected. Do not enter real private details. Policies and estimates are proposed demo copy requiring operational/legal review. Revenue KPIs derive only from orders created on this device; no real company performance is claimed. A production build needs authoritative inventory, server-side validation, transactional orders, verified product assets, secure identity, and real fulfilment integrations.
