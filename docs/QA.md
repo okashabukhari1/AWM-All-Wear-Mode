@@ -80,3 +80,10 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - 320px, 390px and 1440px document widths were checked without horizontal overflow. Desktop center card rendered at approximately 321px high with 115px clearance above/below; mobile center card at approximately 361px with 75px clearance above/below.
 - Scroll Dissolve Reveal and its Three.js/Fiber/Drei dependencies were removed. The campaign renders as an ordinary editorial image with its collection action. No dissolve canvas or sticky dissolve track remains.
 - Captures: awm-product-ring-desktop.png and awm-product-ring-mobile.png. Reduced motion is verified by static rendering, not OS preference emulation; physical touch-device testing was not performed.
+
+## Tighter ring spacing
+
+- Product widths now scale with the full gallery width, and the ring radius uses a smaller spacing allowance. This keeps cards close together while retaining the short 420px source height and full-width stage.
+- At 1440px, the gap between the center product and its immediate neighbour measured about 20px (previously about 140px). At 390px the same gap measured about 11px; the document had no horizontal overflow.
+- Desktop Black colour selection and size-picker opening were rechecked; mobile size-picker opening was rechecked. Existing shopping controls remain intact.
+- Production build passed. Desktop/mobile ring screenshots were updated.

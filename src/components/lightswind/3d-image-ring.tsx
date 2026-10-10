@@ -27,7 +27,7 @@ export interface ThreeDImageRingProps {
 }
 
 export const ThreeDImageRing = forwardRef<ImageRingHandle, ThreeDImageRingProps>(function ThreeDImageRing({
-  images, labels = [], links = [], width = 310, height = 420, perspective = 2000, imageDistance,
+  images, labels = [], links = [], width = 640, height = 420, perspective = 2000, imageDistance,
   containerClassName, renderStaticItem, renderItem, onActiveChange,
 }, ref) {
   const root = useRef<HTMLDivElement>(null);
@@ -42,7 +42,7 @@ export const ThreeDImageRing = forwardRef<ImageRingHandle, ThreeDImageRingProps>
   const reduced = useReducedMotion();
   const count = images.length;
   const angle = count ? 360 / count : 0;
-  const radius = imageDistance ?? (count > 2 ? Math.max(cardWidth / (2 * Math.tan(Math.PI / count)) + 40, stageWidth * .435) : cardWidth * .65);
+  const radius = imageDistance ?? (count > 2 ? Math.max(cardWidth / (2 * Math.tan(Math.PI / count)) + 18, stageWidth * .435) : cardWidth * .65);
 
   const select = (index: number) => {
     if (!count || reduced) return;
@@ -55,7 +55,9 @@ export const ThreeDImageRing = forwardRef<ImageRingHandle, ThreeDImageRingProps>
     const node = root.current;
     if (!node) return;
     const resize = new ResizeObserver(entries => {
-      setCardWidth(Math.min(width, Math.max(240, entries[0].contentRect.width * .3)));
+      // Keep card width proportional to the full stage so the ring has narrow,
+      // consistent gaps instead of spreading fixed-width cards far apart.
+      setCardWidth(Math.min(width, Math.max(240, entries[0].contentRect.width * .34)));
       setStageWidth(entries[0].contentRect.width);
     });
     resize.observe(node);
