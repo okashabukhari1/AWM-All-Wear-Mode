@@ -5,6 +5,7 @@ import App from "./App";
 import "./styles.css";
 import "./styles/layout-refinements.css";
 import "./styles/brand-refinements.css";
+import "./styles/editorial-effects.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

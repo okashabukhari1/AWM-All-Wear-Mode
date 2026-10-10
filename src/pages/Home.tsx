@@ -1,14 +1,13 @@
 import { Image } from "../Image";
 import AWMCinematicHero from "../components/home/AWMCinematicHero";
 import Testimonials from "../components/home/Testimonials";
+import TrendingRing from "../components/home/TrendingRing";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
   ArrowRight,
   Plus,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -16,8 +15,7 @@ import { imagery, money } from "../data";
 import { useStore } from "../store";
 import { ArrowLink, ProductCard } from "../components";
 export default function Home() {
-  const root = useRef<HTMLElement>(null),
-    rail = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLElement>(null);
   const products = useStore((s) => s.products).filter((p) => p.active);
   const [look, setLook] = useState(0);
   const lookProducts = [
@@ -37,16 +35,6 @@ export default function Home() {
           trigger: ".manifesto",
           start: "top 80%",
           end: "bottom 50%",
-          scrub: 1,
-        },
-      });
-      gsap.to(".campaign-photo", {
-        yPercent: 12,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".campaign",
-          start: "top bottom",
-          end: "bottom top",
           scrub: 1,
         },
       });
@@ -176,43 +164,7 @@ export default function Home() {
           </div>
         </section>
       )}
-      <section className="trending section-padding">
-        <div className="section-heading reveal">
-          <div>
-            <p className="eyebrow">THE PIECES IN ROTATION</p>
-            <h2>
-              Current <em>obsessions.</em>
-            </h2>
-          </div>
-          <div className="rail-actions">
-            <ArrowLink to="/trending">Shop the edit</ArrowLink>
-            <button
-              aria-label="Previous products"
-              onClick={() =>
-                rail.current?.scrollBy({ left: -350, behavior: "smooth" })
-              }
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              aria-label="Next products"
-              onClick={() =>
-                rail.current?.scrollBy({ left: 350, behavior: "smooth" })
-              }
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
-        </div>
-        <div className="product-rail" ref={rail}>
-          {products
-            .filter((p) => p.trending)
-            .slice(0, 8)
-            .map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-        </div>
-      </section>
+      <TrendingRing />
       <section className="lookbook">
         <div className="lookbook-image">
           <Image
@@ -313,23 +265,8 @@ export default function Home() {
         </div>
       </section>
       <section className="campaign">
-        <Image
-          className="campaign-photo"
-          src={imagery.campaign}
-          alt="Expressive campaign portrait in warm natural light"
-          loading="lazy"
-        />
-        <div>
-          <p className="eyebrow">AWM / A WARDROBE WITHOUT LIMITS</p>
-          <h2>
-            YOUR STYLE.
-            <br />
-            <em>Your rules.</em>
-          </h2>
-          <ArrowLink to="/collections/streetwear" light>
-            Find your expression
-          </ArrowLink>
-        </div>
+        <Image className="campaign-photo" src={imagery.campaign} alt="Expressive campaign portrait in warm natural light" loading="lazy" />
+        <div><p className="eyebrow">AWM / A WARDROBE WITHOUT LIMITS</p><h2>YOUR STYLE.<br /><em>Your rules.</em></h2><ArrowLink to="/collections/streetwear" light>Find your expression</ArrowLink></div>
         <span>EVERY VERSION OF YOU IS WELCOME.</span>
       </section>
       <section className="brand-story section-padding">

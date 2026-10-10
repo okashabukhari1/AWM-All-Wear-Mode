@@ -69,3 +69,14 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - Navbar checked at 320, 768, 1024, and 1440px: no horizontal document overflow or overlapping header controls. Browser console recorded no warnings/errors during this pass.
 - Mocked asynchronous tests kept readiness pending while fonts were delayed and rejected a missing walking frame. Browser network failure interception and OS-level reduced-motion emulation were not performed.
 - Captures: loader-readiness-desktop.png, loader-readiness-mobile.png, navbar-admin-desktop.png, navbar-admin-mobile.png.
+## Compact full-width product ring
+
+- Production build and 21 tests passed: 10 shopping-state checks, seven readiness checks, reduced-motion rendering, and three ring navigation math checks. The static rendering check confirms the dissolve component is absent.
+- The ring contains complete product cards with compact image height and names, category, price, colour swatches, wishlist and size selection. The gallery fills the section width and leaves top/bottom clearance around the cards.
+- Desktop keyboard End selects product 8; Next wraps to product 1. Native pointer dragging selects a different product without navigating away.
+- Active card Black colour selection carries into quick view. Black / M adds to the bag and appears in the cart line item; the QA addition was removed afterward.
+- Mobile quick view opens, and the wishlist button toggles its pressed state. The temporary wishlist selection was reversed.
+- The product image opens its product route. Inactive cards remain inert; their outer hit surface selects the card. Flattening each card surface preserves working button hit targets inside the 3D ring, and dialogs remain outside the transformed gallery via the existing portal.
+- 320px, 390px and 1440px document widths were checked without horizontal overflow. Desktop center card rendered at approximately 321px high with 115px clearance above/below; mobile center card at approximately 361px with 75px clearance above/below.
+- Scroll Dissolve Reveal and its Three.js/Fiber/Drei dependencies were removed. The campaign renders as an ordinary editorial image with its collection action. No dissolve canvas or sticky dissolve track remains.
+- Captures: awm-product-ring-desktop.png and awm-product-ring-mobile.png. Reduced motion is verified by static rendering, not OS preference emulation; physical touch-device testing was not performed.

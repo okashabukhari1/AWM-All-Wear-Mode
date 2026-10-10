@@ -28,7 +28,10 @@ describe("static reduced-motion experience", () => {
     expect(html).toContain('href="/women"');
     expect(html).toContain("OUTFIT EXPLORER");
     expect(html).toContain("Current");
+    expect(html).toContain('class="trending-static-grid"');
+    expect(html).not.toContain('class="image-ring-stage"');
     expect(html).toContain("YOUR STYLE.");
+    expect(html).not.toContain("scroll-dissolve");
     expect(html).toContain('class="cinema-hero is-static"');
     expect(html).not.toContain("<canvas");
     expect(html).not.toContain("cinema-frame");

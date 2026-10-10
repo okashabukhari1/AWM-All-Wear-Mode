@@ -45,7 +45,7 @@ export default function SiteMotion({ ready }: { ready: boolean }) {
       const scan = () => {
         frame = 0;
         shell.querySelectorAll<HTMLElement>(selector).forEach(element => {
-          if (seen.has(element) || element.closest(".cinema-hero,.testimonial-stage,.modal-backdrop,.manifesto-line,.campaign-photo")) return;
+          if (seen.has(element) || element.closest(".cinema-hero,.testimonial-stage,.image-ring-stage,.trending-static-grid,.modal-backdrop,.manifesto-line,.campaign-photo")) return;
           if (element.parentElement?.closest(units)) return;
           seen.add(element);
           // Closed accordions and inactive controls stay naturally visible when opened.
