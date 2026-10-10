@@ -1,38 +1,56 @@
 .trending { background: #f7f6f2; overflow: clip; padding-block: 44px 32px; }
-.trending .section-heading { margin-bottom: 0; align-items: end; }
-.image-ring-stage { position: relative; width: calc(100% + var(--gutter) * 2); margin-left: calc(var(--gutter) * -1); height: 550px; touch-action: pan-y; user-select: none; cursor: grab; overflow: clip; }
-.image-ring-stage:active { cursor: grabbing; }
-.image-ring-perspective { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); pointer-events: none; }
-.image-ring-track { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
-.image-ring-item { position: absolute; inset: 0; transform-style: flat; backface-visibility: hidden; will-change: transform; pointer-events: auto; }
-.ring-product-content, .ring-product-content > .product-card { height: 100%; }
-.ring-product-content > .product-card { display: flex; flex-direction: column; border-radius: 16px; transform: none; isolation: isolate; }
-.ring-product-content .product-image { flex: 1; min-height: 0; aspect-ratio: auto; border-radius: 16px 16px 0 0; }
-.ring-product-content .product-image img { width: 100%; height: 100%; object-fit: cover; }
-.ring-product-content .product-card-content { flex: none; padding: 12px 14px; }
-.ring-product-content .product-meta { min-height: 38px; }
-.ring-product-content .card-price-row { margin-top: 10px; padding-top: 8px; }
-.ring-product-content .quick-add { opacity: 1; transform: none; }
-.ring-select-overlay { position: absolute; inset: 0; z-index: 5; cursor: grab; }
-.trending-ring-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #cfc7bb; padding-top: 18px; }
-.ring-instruction, .ring-edition { font-size: 9px; letter-spacing: .12em; color: #776655; }
-.ring-controls { display: flex; align-items: center; gap: 18px; }
-.ring-controls > button { width: 42px; height: 42px; border: 1px solid #cfc7bb; border-radius: 50%; display: grid; place-content: center; transition: background .2s, color .2s; }
-.ring-controls > button:hover { background: #181613; color: #f7f3ed; }
-.ring-controls > span { font-size: 12px; font-variant-numeric: tabular-nums; }
-.ring-controls i { font-style: normal; color: #9b8a77; margin-inline: 9px; }
+.trending .section-heading { margin-bottom: 22px; align-items: end; }
+.hover-gallery { width: 100%; max-width: 1040px; margin-inline: auto; container-type: inline-size; --gallery-inset: 18px; }
+.hover-gallery-viewport { padding: 24px var(--gallery-inset); overflow: clip; }
+.hover-gallery-track { display: flex; width: 100%; align-items: center; justify-content: center; transform-style: preserve-3d; pointer-events: none; }
+.hover-gallery-card { position: relative; flex-basis: 0; min-width: 60px; border: 1px solid #cfc7bb; border-radius: 16px; overflow: hidden; isolation: isolate; transform-style: flat; pointer-events: auto; transition: flex-grow .5s cubic-bezier(.22,1,.36,1); background: #e5ded4; }
+.hover-gallery-card.is-active { min-width: 280px; max-width: 320px; }
+.hover-gallery-photo, .hover-gallery-shade, .hover-gallery-select { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hover-gallery-photo { pointer-events: none; filter: grayscale(.25) brightness(.85); transition: filter .3s; }
+.hover-gallery-photo img { width: 100%; height: 100%; object-fit: cover; }
+.hover-gallery-card.has-selection:not(.is-active) .hover-gallery-photo { filter: grayscale(1) brightness(.65); }
+.hover-gallery-card.is-active .hover-gallery-photo { filter: none; }
+.hover-gallery-shade { pointer-events: none; background: linear-gradient(0deg,#000b,transparent 65%); }
+.hover-gallery-card.is-active .hover-gallery-shade { background: linear-gradient(0deg,#000e 0%,#0006 50%,transparent 90%); }
+.hover-gallery-select { z-index: 1; border-radius: inherit; cursor: pointer; }
+.hover-gallery-select:focus-visible { outline: 2px solid #f3d8bc; outline-offset: -5px; }
+.hover-gallery-strip-title { position: absolute; left: 16px; bottom: 20px; max-height: 70%; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; letter-spacing: .03em; color: #fff; pointer-events: none; overflow: hidden; }
+.hover-gallery-details { position: absolute; bottom: 22px; left: 22px; right: 22px; z-index: 4; color: white; pointer-events: none; }
+.hover-gallery-details a, .hover-gallery-details button { pointer-events: auto; }
+.hover-gallery-category { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #ead9c5; margin-bottom: 9px; }
+.hover-gallery-details h3 { font-size: clamp(20px,1.6vw,22px); line-height: 1.1; letter-spacing: -.035em; max-width: 420px; }
+.hover-gallery-description { font-size: 13px; margin-top: 10px; }
+.hover-product-actions { margin-top: 12px; }
+.hover-product-colors { display: flex; align-items: center; gap: 4px; }
+.hover-product-colors button { display: grid; place-content: center; width: 32px; height: 32px; }
+.hover-product-colors button > span { display: block; width: 13px; height: 13px; border-radius: 50%; outline: 1px solid #ffffff70; outline-offset: 3px; }
+.hover-product-colors button[aria-pressed=true] > span { outline: 2px solid #fff; }
+.hover-product-colors > span { font-size: 9px; margin-left: 8px; }
+.hover-product-purchase { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.hover-product-purchase button { height: 36px; padding: 0 14px; border: 1px solid #fff6; border-radius: 24px; display: flex; align-items: center; gap: 20px; font-size: 10px; }
+.hover-product-purchase button:first-child { width: 36px; padding: 0; justify-content: center; }
+.hover-product-purchase .is-saved { background: #f3e1d4; color: #a85029; }
+.hover-gallery-explore { display: inline-flex; align-items: center; gap: 9px; font-size: 9px; text-transform: uppercase; letter-spacing: .07em; margin-top: 14px; }
+.trending-gallery-footer { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #cfc7bb; padding-top: 18px; margin-top: 4px; font-size: 9px; letter-spacing: .1em; color: #776655; }
+.gallery-mobile-hint { display: none; }
 .trending-static-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 22px; margin-top: 30px; }
+.hover-gallery-viewport.is-narrow { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x pan-y; }
+.hover-gallery-viewport.is-narrow .hover-gallery-track { width: max-content; min-width: 100%; justify-content: start; }
+.hover-gallery-viewport.is-narrow .hover-gallery-card { flex: 0 0 64px !important; width: 64px; min-width: 64px; transition: width .45s, flex-basis .45s; }
+.hover-gallery-viewport.is-narrow .hover-gallery-card.is-active { width: min(280px,calc(100cqw - var(--gallery-inset) * 2)); flex-basis: min(280px,calc(100cqw - var(--gallery-inset) * 2)) !important; min-width: 0; }
 @media (max-width: 800px) {
-  .image-ring-stage { height: 530px; }
-  .ring-edition { display: none; }
   .trending-static-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+  .gallery-desktop-hint { display: none; }
+  .gallery-mobile-hint { display: inline; }
 }
 @media (max-width: 560px) {
   .trending .section-heading { gap: 14px; }
   .trending .section-heading h2 { font-size: 31px; }
   .trending .section-heading .arrow-link { font-size: 9px; white-space: nowrap; }
-  .image-ring-stage { height: 510px; }
-  .ring-instruction { font-size: 7px; letter-spacing: .07em; }
-  .ring-controls { gap: 10px; }
-  .ring-controls > button { width: 36px; height: 36px; }
+  .hover-gallery { --gallery-inset: 14px; }
+  .hover-gallery-viewport { padding-block: 20px; }
+  .hover-gallery-details { left: 18px; right: 18px; bottom: 18px; }
+  .hover-gallery-details h3 { font-size: 22px; }
+  .trending-gallery-footer { font-size: 7px; letter-spacing: .07em; }
 }
+@media (prefers-reduced-motion: reduce) { .hover-gallery-card, .hover-gallery-photo { transition: none; } }

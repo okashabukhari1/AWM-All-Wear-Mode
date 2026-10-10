@@ -87,3 +87,14 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - At 1440px, the gap between the center product and its immediate neighbour measured about 20px (previously about 140px). At 390px the same gap measured about 11px; the document had no horizontal overflow.
 - Desktop Black colour selection and size-picker opening were rechecked; mobile size-picker opening was rechecked. Existing shopping controls remain intact.
 - Production build passed. Desktop/mobile ring screenshots were updated.
+
+## Compact Lightswind hover gallery
+
+- Installed 3d-hover-gallery through the requested Lightswind CLI and adapted the supplied source's expanding/tilting panels to actual AWM products. Removed the old ring component, footer controls, rotation helpers and their three obsolete tests.
+- The gallery is centered and capped at 1,040px. Expanded cards are capped at 320px; the observed 1440px desktop card was 280px wide and 420px high. This replaces the previous full-width expanding layout.
+- Pointer selection expands another product with angled neighbours. Keyboard End selects the eighth product; ArrowRight wraps to the first. Mouse focus and card controls use separate hit targets.
+- Black colour selection carries into quick view. Adding Black / M appears in the bag with the correct product and price; the QA addition was removed afterward.
+- At 390px, selecting the next product scrolls it into the visible gallery. Mobile quick view opens; wishlist state toggles and was restored. View piece navigates to the matching product and rendered heading.
+- At 320px the expanded panel fits its gallery container at approximately 237px wide, including all product controls, with zero horizontal document overflow. At 390px it is 280px wide. Horizontal overflow is contained inside the gallery.
+- Reduced motion retains a static product grid. The OS setting and physical touch hardware were not emulated; reduced motion is covered by the static-rendering test.
+- Production build and all 18 remaining tests passed: shopping state, readiness and static rendering. Captures: awm-hover-gallery-desktop.png and awm-hover-gallery-mobile.png.

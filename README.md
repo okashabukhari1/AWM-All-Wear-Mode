@@ -79,10 +79,12 @@ Import this directory as a Vite project. Build command: `npm run build`. Output 
 
 No backend, database, real authentication, email provider, payment processor, shipping integration, or secure admin authorization exists. LocalStorage can be edited and is not protected. Do not enter real private details. Policies and estimates are proposed demo copy requiring operational/legal review. Revenue KPIs derive only from orders created on this device; no real company performance is claimed. A production build needs authoritative inventory, server-side validation, transactional orders, verified product assets, secure identity, and real fulfilment integrations.
 
-## Trending product ring
+## Trending hover gallery
 
-The homepage trending section adapts Lightswind's 3D ring into a full-width product gallery. Shorter cards keep space above and below the ring and contain the existing product name, price, colour, wishlist and size-selected quick-add controls. Side cards select their product; dragging, previous/next, Arrow keys and Home/End rotate and snap the ring. Inactive cards are inert so hidden controls cannot receive keyboard focus. Reduced motion displays the same products in a static grid.
+The homepage trending section uses Lightswind's 3D Hover Gallery, installed with `npx lightswind@latest add 3d-hover-gallery` and adapted to the supplied source reference. The gallery is centered with a maximum width of 1,040px; active product cards remain between 280px and 320px on desktop. Hover, focus or click expands a product while neighbouring panels tilt. Arrow keys and Home/End select products; Escape collapses the desktop selection. Autoplay is disabled.
 
-Scroll Dissolve Reveal was removed at the user's request. The editorial campaign uses a regular image with its collection link; there is no pinned dissolve track or Three.js renderer/dependency. The ring uses Framer Motion while the site's existing entrances continue to use GSAP.
+Product names, prices, colours, wishlist controls, product links and size-selected quick-add are connected to the existing catalogue and store. On narrow screens a contained horizontal gallery supports scrolling and tapping, and expanded cards fit the gallery's own width. Reduced motion displays the same products in a static grid.
 
-Sources: [Lightswind MIT license](docs/vendor/lightswind-LICENSE.txt). Latest captures: [desktop product ring](docs/awm-product-ring-desktop.png), [mobile product ring](docs/awm-product-ring-mobile.png).
+The previous 3D ring component and its rotation helpers were removed. Scroll Dissolve Reveal remains removed; the editorial campaign uses a regular image and collection link. Framer Motion handles the hover gallery, and the site's existing entrances use GSAP.
+
+Sources: [Lightswind MIT license](docs/vendor/lightswind-LICENSE.txt). Current captures: [desktop hover gallery](docs/awm-hover-gallery-desktop.png), [mobile hover gallery](docs/awm-hover-gallery-mobile.png). Earlier ring screenshots in the repository record the prior design.

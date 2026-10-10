@@ -1,7 +1,7 @@
 import { Image } from "../Image";
 import AWMCinematicHero from "../components/home/AWMCinematicHero";
 import Testimonials from "../components/home/Testimonials";
-import TrendingRing from "../components/home/TrendingRing";
+import TrendingGallery from "../components/home/TrendingGallery";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -164,7 +164,7 @@ export default function Home() {
           </div>
         </section>
       )}
-      <TrendingRing />
+      <TrendingGallery />
       <section className="lookbook">
         <div className="lookbook-image">
           <Image
