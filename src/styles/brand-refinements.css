@@ -51,8 +51,8 @@
 .awm-footer-links a:hover, .footer-socials a:hover { color: #e8a56e; }
 .footer-socials a { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .footer-socials small { color: #827b73; font-size: 9px; }
-.awm-footer-mark { margin-top: clamp(36px,5vw,72px); }
-.awm-footer-mark svg { display: block; width: 100%; height: auto; overflow: visible; }
+.awm-footer-mark { margin-top: clamp(36px,5vw,72px); user-select: none; -webkit-user-select: none; cursor: default; }
+.awm-footer-mark svg { display: block; width: 100%; height: auto; overflow: visible; pointer-events: none; }
 .awm-footer-mark text { fill: currentColor; font-family: var(--display); font-size: 350px; font-weight: 700; letter-spacing: -.06em; }
 .awm-footer-mark > span { display: block; font-size: 9px; letter-spacing: .18em; margin-top: 8px; }
 .awm-footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 10px; color: #a69e93; margin-top: 22px; padding-top: 18px; border-top: 1px solid #ffffff24; }
