@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-Executed checks and their limits are recorded in [docs/QA.md](docs/QA.md). Saved preview captures: [desktop](docs/awm-desktop.jpg) and [mobile](docs/awm-mobile.jpg).
+Executed checks and their limits are recorded in [docs/QA.md](docs/QA.md). Latest preview captures: [desktop](docs/optimized-home-desktop.png) and [mobile](docs/optimized-home-mobile.png).
 
 ## Stack and structure
 
@@ -47,11 +47,15 @@ The cart, wishlist, catalogue edits, profiles, session, and orders persist under
 
 ## Motion and accessibility
 
-GSAP is the primary animation engine. The homepage uses one pinned master timeline and a persistent transparent canvas: a quiet opening wordmark and a central walking sequence, then a minimal peach editorial campaign. The outfit has no animated X/Y translation, scale, or top change: scrolling only advances its source pose. Masked “YOUR MODE” lines, a soft circle reveal, and short shopping links provide the surrounding motion. The two outline frame elements and connector have been removed. Scrolling controls the source walking frames in either direction; there is no independent playback. The previous introduction overlay and signature pin have been replaced. The brand preloader runs on every initial page load, refresh, and direct route entry. It prepares all route modules, deduplicated responsive catalogue/editorial images, the entire current-viewport walking sequence, the local image fallback, current-page images (including below-fold lazy images), and fonts before revealing the site. Its counter measures completed tasks; there is no timed reveal or skip shortcut. Required asset failures keep the loader visible with Retry; unavailable editorial/product photos use the loaded local fallback. Reduced motion keeps the same readiness checks with static loading graphics and an immediate reveal. Subsequent in-app navigation does not replay the loader. The shared SiteMotion component gives lazy routes, newly inserted catalogue results, typography, images, cards, forms, account/admin panels, navigation, newsletter and footer elements GSAP entrances and icon interactions. IntersectionObserver limits entrances to visible content; matchMedia cleanup supports live reduced-motion changes. Accordion answers and dialogs have their own entrances. The homepage retains manifesto motion and a regular editorial campaign image.
+GSAP is the primary animation engine. The homepage uses one pinned master timeline and a persistent transparent canvas: a quiet opening wordmark and a central walking sequence, then a minimal peach editorial campaign. The outfit has no animated X/Y translation, scale, or top change: scrolling only advances its source pose. Masked “YOUR MODE” lines, a soft circle reveal, and short shopping links provide the surrounding motion. The two outline frame elements and connector have been removed. Scrolling controls the source walking frames in either direction; there is no independent playback.
 
-`src/components/home/WalkingOutfitSequence.tsx` loads first/current/last and spaced critical poses with four concurrent requests, then prepares the remaining images; the initial boot gate waits for all poses used by the current viewport. It draws only when the pose or canvas dimensions change, caps DPR at 2, and cancels requests/observers on unmount. Desktop uses 180 poses; mobile uses 91 sampled poses at 239 × 480 to reduce decoded memory and transfer. The component responds to viewport changes. Reduced motion shows a static final frame and both shopping links without a pin or canvas loader.
+The brand preloader runs on initial page loads, refreshes, and direct route entry. It prepares the entry route module, visible or explicitly eager page images, fonts and the local fallback. Animated Home also prepares seven spaced walking poses, including the first and last. Other routes and reduced-motion Home skip animated pose downloads. Below-fold photos remain lazy; other routes load when visited. The counter measures completed tasks, and required asset failures keep the loader visible with Retry. Unavailable editorial/product photos use the local fallback. Subsequent in-app navigation does not replay the loader.
 
-Run `python scripts/process-walk.py` with Pillow and NumPy to reproduce the assets from the supplied JPEGs. The script sorts numeric filenames (the source skips 179), creates one shared crop, chroma-keys to genuine alpha, removes green spill, and uses lossless WebP when lossy edge colours fail validation. Mobile edges use lossless WebP. A six-pose light/dark contact sheet is saved to `docs/walk-alpha-proof.jpg`. **The source contains visible forearms and hands, which are preserved; it is not a fully invisible mannequin.**
+The shared SiteMotion component gives routes, newly inserted catalogue results, typography, images, cards, forms, account/admin panels, navigation, newsletter and footer elements GSAP entrances and icon interactions. IntersectionObserver limits entrances to visible content; matchMedia cleanup supports live reduced-motion changes. Accordion answers and dialogs have their own entrances. The homepage retains manifesto motion and a regular editorial campaign image.
+
+`src/components/home/WalkingOutfitSequence.tsx` reuses the seven decoded boot poses, then prepares remaining images with four concurrent requests after readiness. Requested scroll poses get priority, and the component retains at most 48 decoded frames. It draws only when the pose or canvas dimensions change, caps DPR at 2, and cancels requests/observers on unmount. Desktop uses 180 poses; mobile uses 91 sampled poses at 239 × 480. The component responds to viewport changes. Reduced motion shows a static final frame and both shopping links without a pin or canvas loader.
+
+Run `python scripts/process-walk.py` with Pillow and NumPy to reproduce the initial mattes from the supplied JPEGs. It sorts numeric filenames (the source skips 179), creates one shared crop, chroma-keys to genuine alpha and removes green spill. Then run `python scripts/optimize-assets.py --download-editorial` to generate local responsive photo variants and the smaller mobile WebP frames with exact alpha. Without the flag, the optimizer reuses originals cached under `.qa/editorial-originals`. Latest seven-pose light/dark proof: `docs/optimized-walk-proof.jpg`. **The source contains visible forearms and hands, which are preserved; it is not a fully invisible mannequin.**
 
 GSAP contexts and Lenis ticker subscriptions are cleaned up. Dialogs render in a body portal so transformed cards cannot clip them. They handle Escape, focus trapping, focus restoration, and body scrolling. Navigation and forms have labels and visible focus states.
 
@@ -61,13 +65,25 @@ Current visual captures: [desktop hero](docs/awm-minimal-hero-desktop.jpg), [mob
 
 ## Image and font references
 
-Images are stock/editorial **references**, served from Unsplash via stable photo URLs centralized in `src/data.ts`. Product photos are grouped by clothing category and are intentionally illustrative; several catalogue entries reuse references. Exact garment identity, material specifications, fit, and colour photography are not asserted. Replace with brand-owned or approved SKU photography before presenting as a real inventory catalogue. The outfit explorer is illustrative styling rather than an exact matched purchasable outfit.
+Images are stock/editorial **references**. Sixteen existing Unsplash references and eight local Pexels references now have self-hosted WebP variants at 480, 900 and up to 1600px. The shared `Image` component maps legacy catalogue URLs to these assets, including persisted default imagery, while preserving custom admin uploads. Product photos are grouped by clothing category and are intentionally illustrative; several catalogue entries reuse references. Exact garment identity, material specifications, fit, and colour photography are not asserted. Replace with approved SKU photography for a real inventory catalogue. The outfit explorer is illustrative styling.
 
 Unsplash licence: https://unsplash.com/license
 
-Additional womenswear image references: [white tee, Brian Wangenheim](https://unsplash.com/photos/woman-in-white-t-shirt-zG1c8Q6H9C8), [shirt and trousers, Jennifer mela444](https://unsplash.com/photos/woman-in-white-shirt-and-beige-pants-zRUP4LrIn68), [neutral layer and denim, Juan Ordonez](https://unsplash.com/photos/woman-in-beige-long-sleeve-shirt-and-gray-denim-jeans-leaning-on-glass-wall-NGAwzpvEzXQ). These published photo pages identify the images as available under the Unsplash License. Responsive sources are delivered through a shared `Image` component, with an explicit local editorial-reference fallback if a remote image cannot load.
+Additional womenswear image references: [white tee, Brian Wangenheim](https://unsplash.com/photos/woman-in-white-t-shirt-zG1c8Q6H9C8), [shirt and trousers, Jennifer mela444](https://unsplash.com/photos/woman-in-white-shirt-and-beige-pants-zRUP4LrIn68), [neutral layer and denim, Juan Ordonez](https://unsplash.com/photos/woman-in-beige-long-sleeve-shirt-and-gray-denim-jeans-leaning-on-glass-wall-NGAwzpvEzXQ). Responsive sources are delivered through the shared `Image` component, with a local editorial-reference fallback on image failure.
 
-Fonts: Space Grotesk, DM Sans, and DM Serif Display from Google Fonts. External image/font requests require network access; self-host licensed production assets for offline reliability. No competitor branding or assets are copied.
+Space Grotesk, DM Sans and DM Serif Display are self-hosted Latin WOFF2 fonts from Fontsource packages, with `font-display: swap` and preloads for the two primary families. Their OFL licences are retained in `docs/vendor`. Default imagery and fonts no longer depend on external requests at runtime. Custom admin image URLs may still require network access.
+
+## Performance
+
+| Measured asset scope | Before | After |
+| --- | ---: | ---: |
+| Startup JavaScript, gzip (Home and required chunks) | ~232 KB, including all boot-preloaded routes | ~160 KB; other routes and gallery deferred |
+| 24 photo references, originals versus default 900px variants | 8.10 MB | 1.53 MB (81% less) |
+| All 180 mobile frame files | 11.35 MB | 3.25 MB (71% less) |
+| Walking bytes required before desktop reveal | 3.75 MB / 180 poses | 0.14 MB / 7 poses |
+| Walking bytes required before mobile reveal | 5.71 MB / 91 poses | 0.12 MB / 7 poses |
+
+The 3D gallery and its Framer Motion features load within 600px of the section. A fixed-height placeholder preserves its space. Store selectors reduce unnecessary card renders; image-driven ScrollTrigger refreshes are coalesced into one animation frame. Hashed JavaScript/font bundles support long-lived caching. `public/_headers` supplies caching rules for hosts supporting that format; other hosts need equivalent configuration. These figures measure asset bytes, not a guaranteed connection speed. Local production-preview readiness was observed at approximately 0.6–0.8 seconds; no throttled Lighthouse or deployed-server measurement was performed.
 
 ## Vercel
 
@@ -89,4 +105,4 @@ The eight featured products use local modest fashion editorial images, including
 
 The previous 3D ring component and its rotation helpers were removed. Scroll Dissolve Reveal remains removed; the editorial campaign uses a regular image and collection link. Framer Motion handles the hover gallery, and the site's existing entrances use GSAP.
 
-Sources: [Lightswind MIT license](docs/vendor/lightswind-LICENSE.txt). Current captures: [desktop hover gallery](docs/awm-hover-gallery-desktop.png), [mobile hover gallery](docs/awm-hover-gallery-mobile.png). Earlier ring screenshots in the repository record the prior design.
+Sources: [Lightswind MIT license](docs/vendor/lightswind-LICENSE.txt). Current captures: [desktop hover gallery](docs/optimized-gallery-desktop.png), [mobile hover gallery](docs/optimized-gallery-mobile.png). Earlier ring screenshots in the repository record the prior design.

@@ -1,23 +1,24 @@
 import type { ImgHTMLAttributes } from "react";
-import { IMAGE_WIDTHS, responsiveSources } from "./lib/image-assets";
+import { imageVariants } from "./lib/image-assets";
 
 /** Keep responsive image delivery and the documented editorial fallback in one place. */
 export function Image({
   src,
   sizes,
   onError,
+  loading = "lazy",
+  decoding = "async",
   ...props
 }: ImgHTMLAttributes<HTMLImageElement>) {
-  const responsive = src?.startsWith("https://images.unsplash.com/");
-  const srcSet = responsive
-    ? responsiveSources(src!).map((url, index) => `${url} ${IMAGE_WIDTHS[index]}w`)
-        .join(", ")
-    : undefined;
+  const variants = src ? imageVariants(src) : [];
+  const srcSet = variants.length > 1 ? variants.map(image => `${image.src} ${image.width}w`).join(", ") : undefined;
   return (
     <img
       {...props}
-      src={src}
+      src={variants[Math.min(1, variants.length - 1)]?.src || src}
       srcSet={srcSet}
+      loading={loading}
+      decoding={decoding}
       width={1200}
       height={1600}
       sizes={sizes || "(max-width: 560px) 90vw, (max-width: 900px) 45vw, 30vw"}

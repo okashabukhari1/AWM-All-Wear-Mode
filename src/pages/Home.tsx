@@ -39,10 +39,12 @@ export default function Home() {
         },
       });
     }, root);
-    const refresh = () => ScrollTrigger.refresh();
+    let refreshFrame = 0;
+    const refresh = () => { if (!refreshFrame) refreshFrame = requestAnimationFrame(() => { refreshFrame = 0; ScrollTrigger.refresh(); }); };
     const images = root.current?.querySelectorAll("img");
     images?.forEach((img) => img.addEventListener("load", refresh));
     return () => {
+      cancelAnimationFrame(refreshFrame);
       images?.forEach((img) => img.removeEventListener("load", refresh));
       ctx.revert();
     };

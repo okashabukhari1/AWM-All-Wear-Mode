@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
   build: {
-    chunkSizeWarningLimit: 700,
+    rollupOptions: { output: { manualChunks: {
+      react: ["react", "react-dom", "react-dom/client", "react-router-dom"],
+      animation: ["gsap", "lenis"],
+    } } },
   },
 });

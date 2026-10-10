@@ -1,6 +1,7 @@
 .trending { background: #f7f6f2; overflow: clip; padding-block: 44px 32px; }
 .trending .section-heading { margin-bottom: 22px; align-items: end; }
 .hover-gallery { width: 100%; max-width: 1040px; margin-inline: auto; container-type: inline-size; --gallery-inset: 18px; }
+.hover-gallery-placeholder { height: 468px; display: grid; place-items: center; color: #776655; font-size: 10px; letter-spacing: .08em; }
 .hover-gallery-viewport { padding: 24px var(--gallery-inset); overflow: clip; }
 .hover-gallery-track { display: flex; width: 100%; align-items: center; justify-content: center; transform-style: preserve-3d; pointer-events: none; }
 .hover-gallery-card { position: relative; flex-basis: 0; min-width: 0; max-width: 320px; border: 1px solid #cfc7bb; border-radius: 16px; overflow: hidden; isolation: isolate; transform-style: flat; pointer-events: auto; transition: flex-grow var(--gallery-duration,.65s) cubic-bezier(.22,1,.36,1); background: #e5ded4; }

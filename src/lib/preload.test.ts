@@ -3,10 +3,10 @@ import { prepareWebsite, runLoadQueue } from "./preload";
 import { uniqueImageSources } from "./image-assets";
 import { frameUrl, walkingFrames } from "./walk-assets";
 
-vi.mock("../page-loaders", () => ({ pageLoaders: { demo: async () => ({}) } }));
+vi.mock("../page-loaders", () => ({ pageLoaderFor: vi.fn(() => async () => ({})) }));
 afterEach(() => vi.unstubAllGlobals());
 
-function mockBrowser(missingFrame = false) {
+function mockBrowser(missingFrame = false, images: unknown[] = []) {
   const fonts = deferred();
   const requests: string[] = [];
   class MockImage {
@@ -24,9 +24,10 @@ function mockBrowser(missingFrame = false) {
     removeAttribute() {}
   }
   vi.stubGlobal("Image", MockImage);
-  vi.stubGlobal("matchMedia", () => ({ matches: true }));
+  vi.stubGlobal("matchMedia", (query: string) => ({ matches: query.includes("max-width") }));
+  vi.stubGlobal("window", { innerHeight: 900 });
   vi.stubGlobal("requestAnimationFrame", (callback: () => void) => { queueMicrotask(callback); return 1; });
-  vi.stubGlobal("document", { fonts: { ready: fonts.promise }, querySelectorAll: () => [] });
+  vi.stubGlobal("document", { fonts: { ready: fonts.promise }, querySelectorAll: () => images });
   return { fonts, requests };
 }
 
@@ -43,13 +44,14 @@ describe("website readiness", () => {
     const routes = vi.fn();
     const ready = vi.fn();
     const progress = vi.fn();
-    const loading = prepareWebsite({ products: [], signal: new AbortController().signal,
+    const loading = prepareWebsite({ pathname: "/", signal: new AbortController().signal,
       waitForPage: page.promise, onRoutesReady: routes, onProgress: progress,
     }).then(ready);
-    await vi.waitFor(() => expect(requests.filter(src => src.includes("/animations/"))).toHaveLength(91));
+    await vi.waitFor(() => expect(routes).toHaveBeenCalledOnce());
     expect(routes).toHaveBeenCalledOnce();
     expect(ready).not.toHaveBeenCalled();
     page.resolve();
+    await vi.waitFor(() => expect(requests.filter(src => src.includes("/animations/"))).toHaveLength(7));
     await vi.waitFor(() => {
       const [settled, total] = progress.mock.lastCall!;
       expect(settled).toBe(total - 1);
@@ -67,12 +69,42 @@ describe("website readiness", () => {
     fonts.resolve();
     const ready = vi.fn();
     const controller = new AbortController();
-    const loading = prepareWebsite({ products: [], signal: controller.signal,
+    const loading = prepareWebsite({ pathname: "/", signal: controller.signal,
       waitForPage: Promise.resolve(), onRoutesReady: () => {}, onProgress: () => {},
     }).then(ready);
     await expect(loading).rejects.toThrow("frame_0001.webp");
     controller.abort();
     expect(ready).not.toHaveBeenCalled();
+  });
+
+  it("loads only the entry route and visible images, leaving below-fold photos lazy", async () => {
+    const visible = { loading: "lazy", decode: vi.fn(async () => {}), getBoundingClientRect: () => ({ top: 150, bottom: 600 }) };
+    const below = { loading: "lazy", decode: vi.fn(async () => {}), getBoundingClientRect: () => ({ top: 1500, bottom: 2000 }) };
+    const { fonts, requests } = mockBrowser(false, [visible, below]);
+    fonts.resolve();
+    const { pageLoaderFor } = await import("../page-loaders");
+    vi.mocked(pageLoaderFor).mockClear();
+    await prepareWebsite({ pathname: "/admin/products", signal: new AbortController().signal,
+      waitForPage: Promise.resolve(), onRoutesReady: () => {}, onProgress: () => {},
+    });
+    expect(pageLoaderFor).toHaveBeenCalledExactlyOnceWith("/admin/products");
+    expect(requests.filter(src => src.includes("/animations/"))).toHaveLength(0);
+    expect(visible.decode).toHaveBeenCalledOnce();
+    expect(visible.loading).toBe("eager");
+    expect(below.decode).not.toHaveBeenCalled();
+    expect(below.loading).toBe("lazy");
+  });
+
+  it("uses the local fallback for a failed critical editorial image", async () => {
+    const image = { loading: "eager", src: "/missing.webp", currentSrc: "", removeAttribute: vi.fn(),
+      getBoundingClientRect: () => ({ top: 150, bottom: 600 }), decode: vi.fn().mockRejectedValueOnce(new Error("missing")).mockResolvedValue(undefined) };
+    const { fonts } = mockBrowser(false, [image]);
+    fonts.resolve();
+    await prepareWebsite({ pathname: "/women", signal: new AbortController().signal,
+      waitForPage: Promise.resolve(), onRoutesReady: () => {}, onProgress: () => {},
+    });
+    expect(image.src).toBe("/reference.svg");
+    expect(image.decode).toHaveBeenCalledTimes(2);
   });
 
   it("waits for the final asset and limits simultaneous requests", async () => {
@@ -131,7 +163,7 @@ describe("website readiness", () => {
     ])).toHaveLength(4);
   });
 
-  it("prepares every pose used by the desktop or mobile canvas", () => {
+  it("retains every pose used by the desktop or mobile canvas", () => {
     expect(walkingFrames(false)).toHaveLength(180);
     expect(walkingFrames(true)).toHaveLength(91);
     expect(walkingFrames(true).at(-1)).toBe(180);

@@ -1,7 +1,7 @@
 // Adapted from the Lightswind 3d-hover-gallery registry and supplied reference.
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode, KeyboardEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m as motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -98,7 +98,7 @@ export default function ThreeDHoverGallery({
   if (!count) return null;
   if (reduced) return <div ref={containerRef} className="trending-static-grid">{galleryItems.map((item, index) => <div key={item.href || index}>{renderStaticItem ? renderStaticItem(index) : <><Image src={item.url} alt={item.title} />{item.href ? <Link to={item.href}>{item.title}</Link> : <p>{item.title}</p>}</>}</div>)}</div>;
 
-  return <div className={cn("hover-gallery", className)} style={style}>
+  return <LazyMotion features={domAnimation} strict><div className={cn("hover-gallery", className)} style={style}>
     <div ref={containerRef} className={`hover-gallery-viewport ${narrow ? "is-narrow" : ""}`} role="region" aria-label="Trending 3D hover gallery"
       style={{ "--gallery-duration": `${transitionDuration}s` } as CSSProperties}
       onMouseEnter={cancelLeave}
@@ -119,7 +119,7 @@ export default function ThreeDHoverGallery({
             onPointerLeave={cancelHover}
             onFocusCapture={() => activate(index)}>
             <motion.div className="hover-gallery-photo" animate={{ scale: isActive ? hoverScale : 1 }} transition={{ duration: transitionDuration, ease }}>
-              <Image src={item.url} alt={item.title} sizes="(max-width: 800px) 280px, 50vw" loading="lazy" draggable={false} />
+              <Image src={item.url} alt={item.title} sizes="(max-width: 800px) 280px, 320px" loading="lazy" draggable={false} />
             </motion.div>
             <div className="hover-gallery-shade" aria-hidden="true" />
             <button ref={node => { buttons.current[index] = node; }} className="hover-gallery-select" aria-label={`Explore ${item.title}`} aria-expanded={isActive} aria-controls={isActive ? `${id}-${index}` : undefined}
@@ -139,5 +139,5 @@ export default function ThreeDHoverGallery({
         })}
       </div>
     </div>
-  </div>;
+  </div></LazyMotion>;
 }

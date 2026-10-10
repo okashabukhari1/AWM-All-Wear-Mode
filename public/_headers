@@ -1,0 +1,11 @@
+# Supported by Netlify and Cloudflare Pages; configure equivalents on other hosts.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/animations/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache

@@ -58,7 +58,8 @@ export default function SiteMotion({ ready }: { ready: boolean }) {
         });
       };
       scan();
-      const mutations = new MutationObserver(() => {
+      const mutations = new MutationObserver(records => {
+        if (records.every(record => record.target instanceof Element && record.target.closest(".hover-gallery,.testimonial-stage,.cinema-hero"))) return;
         if (!frame) frame = requestAnimationFrame(scan);
       });
       mutations.observe(shell, { childList: true, subtree: true });

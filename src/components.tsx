@@ -276,7 +276,8 @@ export function Header() {
 }
 export { Footer } from "./components/Footer";
 export function ProductCard({ product: p }: { product: Product }) {
-  const state = useStore();
+  const saved = useStore(state => state.wishlist.includes(p.id));
+  const wish = useStore(state => state.wish);
   const [quick, setQuick] = useState(false);
   const [color, setColor] = useState(p.colors[0]);
   const selectedColor = p.colors.includes(color) ? color : p.colors[0];
@@ -297,14 +298,14 @@ export function ProductCard({ product: p }: { product: Product }) {
           {p.isNew ? "NEW IN" : p.trending ? "THE EDIT" : ""}
         </span>
         <button
-          className={`wish-button ${state.wishlist.includes(p.id) ? "saved" : ""}`}
+          className={`wish-button ${saved ? "saved" : ""}`}
           aria-label={`Save ${p.name}`}
-          aria-pressed={state.wishlist.includes(p.id)}
-          onClick={() => state.wish(p.id)}
+          aria-pressed={saved}
+          onClick={() => wish(p.id)}
         >
           <Heart
             size={17}
-            fill={state.wishlist.includes(p.id) ? "currentColor" : "none"}
+            fill={saved ? "currentColor" : "none"}
           />
         </button>
         <div className="card-swatches" role="group" aria-label={`Choose colour for ${p.name}`}>

@@ -11,7 +11,7 @@
     672
   ],
   "desktopBytes": 3754270,
-  "mobileBytes": 11350450,
+  "mobileBytes": 3248152,
   "sourceIndices": [
     1,
     2,
@@ -194,5 +194,6 @@
     180,
     181
   ],
-  "limitation": "Visible source forearms and hands preserved. No fabricated garment pixels."
+  "limitation": "Visible source forearms and hands preserved. No fabricated garment pixels.",
+  "mobileEncoding": "WebP quality 84, 480px high, original alpha preserved"
 }

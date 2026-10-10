@@ -5,11 +5,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { Header, Footer, CartDrawer } from "./components";
 import { useStore } from "./store";
-import Home from "./pages/Home";
+import { WebsiteReadiness } from "./lib/website-readiness";
 import { BrandPreloader } from "./components/BrandPreloader";
 import SiteMotion from "./components/SiteMotion";
 import { pageLoaders } from "./page-loaders";
 const Catalog = lazy(pageLoaders.catalog);
+const Home = lazy(pageLoaders.home);
 const ProductPage = lazy(pageLoaders.product);
 const Shopping = lazy(pageLoaders.shopping);
 const Account = lazy(pageLoaders.account);
@@ -105,7 +106,8 @@ export default function App() {
     <>
       <SiteMotion ready={phase !== "loading"} />
       {loading && <BrandPreloader waitForPage={page.promise} onRoutesReady={() => setRoutesReady(true)} onReveal={() => setPhase("revealing")} onReady={() => setPhase("ready")} />}
-      <div className="app-shell" inert={loading} aria-hidden={loading || undefined} style={{ visibility: phase === "loading" ? "hidden" : "visible" }}>
+      <WebsiteReadiness.Provider value={phase !== "loading"}>
+      <div className="app-shell" data-ready={phase === "ready"} inert={loading} aria-hidden={loading || undefined} style={{ visibility: phase === "loading" ? "hidden" : "visible" }}>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -175,6 +177,7 @@ export default function App() {
         </div>
       )}
       </div>
+      </WebsiteReadiness.Provider>
     </>
   );
 }

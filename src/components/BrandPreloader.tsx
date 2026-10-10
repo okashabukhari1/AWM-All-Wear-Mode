@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { useStore } from "../store";
+import { useLocation } from "react-router-dom";
 import { prepareWebsite } from "../lib/preload";
 
 export function BrandPreloader(props: {
@@ -9,6 +9,7 @@ export function BrandPreloader(props: {
   onReveal: () => void;
   onReady: () => void;
 }) {
+  const { pathname } = useLocation();
   const root = useRef<HTMLDivElement>(null);
   const callbacks = useRef(props);
   callbacks.current = props;
@@ -33,7 +34,7 @@ export function BrandPreloader(props: {
       return () => context.revert();
     });
     prepareWebsite({
-      products: useStore.getState().products,
+      pathname,
       signal: controller.signal,
       waitForPage: callbacks.current.waitForPage,
       onRoutesReady: () => callbacks.current.onRoutesReady(),
@@ -66,12 +67,14 @@ export function BrandPreloader(props: {
 
   useEffect(() => {
     if (!prepared) return;
+    performance.mark("awm:prepared");
+    document.documentElement.dataset.awmPreparedMs = String(Math.round(performance.now()));
     callbacks.current.onReveal();
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
       callbacks.current.onReady();
       return;
     }
-    const tween = gsap.to(root.current, { yPercent: -100, duration: .5, ease: "power3.inOut", onComplete: () => callbacks.current.onReady() });
+    const tween = gsap.to(root.current, { yPercent: -100, duration: .32, ease: "power3.inOut", onComplete: () => callbacks.current.onReady() });
     return () => { tween.kill(); };
   }, [prepared]);
 

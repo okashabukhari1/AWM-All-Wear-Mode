@@ -6,13 +6,15 @@ import {
   useState,
 } from "react";
 
-import { FRAME_COUNT, frameUrl, walkingFrames } from "../../lib/walk-assets";
+import { FRAME_COUNT, frameUrl, walkingFrames, takePreparedWalkingFrame } from "../../lib/walk-assets";
+import { useWebsiteReady } from "../../lib/website-readiness";
 export type WalkingSequenceHandle = { setProgress: (progress: number) => void };
 
 /** One persistent canvas. Progress comes exclusively from the parent's scroll timeline. */
 export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
   function WalkingOutfitSequence(_, ref) {
     const canvas = useRef<HTMLCanvasElement>(null);
+    const ready = useWebsiteReady();
     const request = useRef<(progress: number) => void>(() => {});
     const progress = useRef(0);
     const [mobile, setMobile] = useState(
@@ -39,6 +41,7 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
     }, []);
 
     useEffect(() => {
+      if (!ready) return;
       const node = canvas.current!;
       const container = node.parentElement!;
       const context = node.getContext("2d", { alpha: true });
@@ -99,10 +102,22 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
       function schedule() {
         if (!raf && alive) raf = requestAnimationFrame(draw);
       }
+      function retain(index: number, image: HTMLImageElement) {
+        images.set(index, image);
+        // Bound decoded memory; compressed requests remain in the browser cache.
+        const desired = desiredFrame(progress.current);
+        while (images.size > 48) {
+          const farthest = [...images.keys()].reduce((a, b) => Math.abs(b - desired) > Math.abs(a - desired) ? b : a);
+          images.delete(farthest);
+        }
+        schedule();
+      }
       function pump() {
         while (alive && active < 4 && queue.length) {
           const index = queue.shift()!;
           if (images.has(index) || pending.has(index)) continue;
+          const prepared = takePreparedWalkingFrame(index, mobile);
+          if (prepared) { retain(index, prepared); continue; }
           active++;
           pending.add(index);
           const image = new window.Image();
@@ -115,17 +130,18 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
             }
             active--;
             pending.delete(index);
+            inflight.delete(image);
             if (!alive) {
               image.src = "";
               return;
             }
-            images.set(index, image);
-            schedule();
+            retain(index, image);
             pump();
           };
           image.onerror = () => {
             active--;
             pending.delete(index);
+            inflight.delete(image);
             if (alive) pump();
           };
           // Track in-flight requests too, so they are cancelled on unmount.
@@ -178,7 +194,7 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
         node.height = 0;
         delete container.dataset.ready;
       };
-    }, [mobile]);
+    }, [mobile, ready]);
 
     return <canvas ref={canvas} className="walk-canvas" aria-hidden="true" />;
   },

@@ -1,8 +1,5 @@
-import { imagery } from "../data";
-import type { Product } from "../data";
-import { pageLoaders } from "../page-loaders";
-import { uniqueImageSources } from "./image-assets";
-import { frameUrl, walkingFrames } from "./walk-assets";
+import { pageLoaderFor } from "../page-loaders";
+import { CRITICAL_FRAMES, frameUrl, rememberWalkingFrame } from "./walk-assets";
 
 export type LoadTask = () => Promise<unknown>;
 
@@ -28,7 +25,7 @@ export async function runLoadQueue(tasks: LoadTask[], signal: AbortSignal, onSet
   signal.throwIfAborted();
 }
 
-function loadImage(src: string, signal: AbortSignal): Promise<void> {
+function loadImage(src: string, signal: AbortSignal): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     signal.throwIfAborted();
     const image = new Image();
@@ -40,7 +37,7 @@ function loadImage(src: string, signal: AbortSignal): Promise<void> {
       signal.removeEventListener("abort", abort);
       image.onload = image.onerror = null;
       if (error) { image.removeAttribute("src"); reject(error); }
-      else resolve();
+      else resolve(image);
     };
     const abort = () => finish(signal.reason);
     // A stalled asset offers Retry; a timeout never reveals an unfinished site.
@@ -59,64 +56,58 @@ function loadImage(src: string, signal: AbortSignal): Promise<void> {
 const nextPaint = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
 
 export async function prepareWebsite(options: {
-  products: Product[];
+  pathname: string;
   signal: AbortSignal;
   waitForPage: Promise<void>;
   onRoutesReady: () => void;
   onProgress: (settled: number, total: number) => void;
 }) {
   const { signal, waitForPage, onRoutesReady, onProgress } = options;
+  onProgress(0, 1);
+  // Only load the module for this entry route; other routes remain code-split.
+  await pageLoaderFor(options.pathname)();
+  signal.throwIfAborted();
+  onRoutesReady();
+  await waitForPage;
+  await nextPaint();
+  signal.throwIfAborted();
   const mobile = matchMedia("(max-width: 767px)").matches;
-  const sources = uniqueImageSources([
-    ...Object.values(imagery),
-    ...options.products.flatMap(product => product.images),
-  ]);
-  const frames = walkingFrames(mobile).map(index => frameUrl(index, mobile));
-  const routes = Object.values(pageLoaders);
-  const total = routes.length + sources.length + frames.length + 3;
-  let settled = 0;
+  const animatedHome = options.pathname === "/" && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const frames = animatedHome ? CRITICAL_FRAMES : [];
+  // Never turn all below-fold lazy photos into eager downloads.
+  const images = [...document.querySelectorAll<HTMLImageElement>(".app-shell img")].filter(image => {
+    const box = image.getBoundingClientRect();
+    return image.loading !== "lazy" || (box.top < window.innerHeight && box.bottom > 0);
+  });
+  images.forEach(image => { image.loading = "eager"; });
+  await nextPaint();
+  const total = frames.length + images.length + 4;
+  let settled = 2; // The entry module and mounted page are already prepared.
   const advance = () => { signal.throwIfAborted(); onProgress(++settled, total); };
-  onProgress(0, total);
+  onProgress(settled, total);
   const fallback = loadImage("/reference.svg", signal);
   // Attach a handler immediately even when other tasks fail first.
   fallback.catch(() => {});
-  const photoTasks = sources.map(src => async () => {
-    try { await loadImage(src, signal); }
-    catch {
+  const pageImages = images.map(image => async () => {
+    try { await image.decode(); }
+    catch (error) {
       signal.throwIfAborted();
+      if ((image.currentSrc || image.src).includes("/animations/awm-walk/")) throw error;
       await fallback;
+      image.removeAttribute("srcset");
+      image.src = "/reference.svg";
+      await image.decode();
     }
   });
-  const routesReady = Promise.all(routes.map(async load => { await load(); advance(); }))
-    .then(() => { signal.throwIfAborted(); onRoutesReady(); });
-  const pageImages = async () => {
-    await waitForPage;
-    signal.throwIfAborted();
-    // Include below-fold lazy images and the current route's exact responsive sizes.
-    const images = [...document.querySelectorAll<HTMLImageElement>(".app-shell img")];
-    images.forEach(image => { image.loading = "eager"; });
-    await nextPaint();
-    await runLoadQueue(images.map(image => async () => {
-      const src = image.currentSrc || image.src;
-      try { await loadImage(src, signal); }
-      catch (error) {
-        signal.throwIfAborted();
-        if (src.includes("/animations/awm-walk/")) throw error;
-        await fallback;
-        image.removeAttribute("srcset");
-        image.src = "/reference.svg";
-      }
-      await image.decode();
-    }), signal, () => {});
-  };
-  await Promise.all([
-    routesReady,
-    runLoadQueue([...photoTasks, ...frames.map(src => () => loadImage(src, signal)),
-      () => fallback,
-      async () => { await waitForPage; await nextPaint(); await document.fonts.ready; signal.throwIfAborted(); },
-      pageImages,
-    ], signal, advance),
-  ]);
+  await runLoadQueue([
+    ...frames.map(index => async () => {
+      const image = await loadImage(frameUrl(index, mobile), signal);
+      rememberWalkingFrame(index, mobile, image);
+    }),
+    ...pageImages,
+    () => fallback,
+    async () => { await document.fonts.ready; signal.throwIfAborted(); },
+  ], signal, advance);
   await nextPaint();
   signal.throwIfAborted();
 }
