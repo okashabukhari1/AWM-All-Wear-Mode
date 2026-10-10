@@ -38,12 +38,14 @@ export interface ThreeDHoverGalleryProps {
 
 export default function ThreeDHoverGallery({
   images, items, itemHeight = 420, gap = 10, perspective = 1000,
-  hoverScale = 1.05, transitionDuration = .5, enableKeyboardNavigation = true,
+  hoverScale = 1.04, transitionDuration = .65, enableKeyboardNavigation = true,
   autoPlay = false, autoPlayDelay = 4000, className, style,
   onImageClick, onImageHover, renderActions, renderStaticItem,
 }: ThreeDHoverGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
+  const hoverIntent = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const leaveIntent = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [narrow, setNarrow] = useState(false);
   const [interacting, setInteracting] = useState(false);
@@ -54,6 +56,11 @@ export default function ThreeDHoverGallery({
   })) ?? [], [items, images]);
   const count = galleryItems.length;
   const selected = count ? (narrow ? activeIndex ?? 0 : activeIndex) : null;
+  const ease = [.22, 1, .36, 1] as const;
+
+  const cancelHover = () => { if (hoverIntent.current) clearTimeout(hoverIntent.current); hoverIntent.current = null; };
+  const cancelLeave = () => { if (leaveIntent.current) clearTimeout(leaveIntent.current); leaveIntent.current = null; };
+  useEffect(() => () => { cancelHover(); cancelLeave(); }, []);
 
   useEffect(() => {
     const node = containerRef.current;
@@ -71,7 +78,7 @@ export default function ThreeDHoverGallery({
     return () => clearInterval(timer);
   }, [autoPlay, autoPlayDelay, count, reduced, interacting]);
 
-  const activate = (index: number) => setActiveIndex(index);
+  const activate = (index: number) => { cancelHover(); cancelLeave(); setActiveIndex(index); };
   const keyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     if (!enableKeyboardNavigation) return;
     const next = event.key === "ArrowLeft" ? (index - 1 + count) % count
@@ -93,7 +100,9 @@ export default function ThreeDHoverGallery({
 
   return <div className={cn("hover-gallery", className)} style={style}>
     <div ref={containerRef} className={`hover-gallery-viewport ${narrow ? "is-narrow" : ""}`} role="region" aria-label="Trending 3D hover gallery"
-      onMouseLeave={() => { if (!document.activeElement?.closest('[role="dialog"]') && !containerRef.current?.contains(document.activeElement)) { setInteracting(false); if (!narrow) setActiveIndex(null); } }}
+      style={{ "--gallery-duration": `${transitionDuration}s` } as CSSProperties}
+      onMouseEnter={cancelLeave}
+      onMouseLeave={() => { cancelHover(); cancelLeave(); leaveIntent.current = setTimeout(() => { if (!document.activeElement?.closest('[role="dialog"]') && !containerRef.current?.contains(document.activeElement)) { setInteracting(false); if (!narrow) setActiveIndex(null); } }, 140); }}
       onFocusCapture={() => setInteracting(true)}
       onBlurCapture={event => { if (event.relatedTarget instanceof Element && event.relatedTarget.closest('[role="dialog"]')) return; if (!event.currentTarget.contains(event.relatedTarget as Node | null)) { setInteracting(false); if (!narrow) setActiveIndex(null); } }}>
       <div className="hover-gallery-track" style={{ perspective, gap }}>
@@ -101,23 +110,24 @@ export default function ThreeDHoverGallery({
           const isActive = selected === index;
           return <motion.article key={item.href || index} className={`hover-gallery-card ${isActive ? "is-active" : ""} ${selected !== null ? "has-selection" : ""}`} data-index={index}
             animate={{ rotateY: narrow || selected === null ? 0 : index < selected ? 24 : index > selected ? -24 : 0 }}
-            transition={{ rotateY: { type: "spring", stiffness: 90, damping: 15 } }}
+            transition={{ rotateY: { duration: transitionDuration, ease } }}
             style={{ height: itemHeight, zIndex: isActive ? 20 : 10, flexGrow: isActive ? 3 : 1 }}
             onTransitionEnd={event => {
               if (narrow && isActive && event.target === event.currentTarget && event.propertyName === "flex-basis") buttons.current[index]?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
             }}
-            onPointerEnter={event => { if (event.pointerType === "mouse" && !narrow) { setInteracting(true); activate(index); onImageHover?.(index, item); } }}
+            onPointerEnter={event => { cancelLeave(); if (event.pointerType === "mouse" && !narrow) { cancelHover(); setInteracting(true); hoverIntent.current = setTimeout(() => { activate(index); onImageHover?.(index, item); }, 80); } }}
+            onPointerLeave={cancelHover}
             onFocusCapture={() => activate(index)}>
-            <motion.div className="hover-gallery-photo" animate={{ scale: isActive ? hoverScale : 1 }} transition={{ duration: transitionDuration, ease: [.1, .7, 0, 1] }}>
+            <motion.div className="hover-gallery-photo" animate={{ scale: isActive ? hoverScale : 1 }} transition={{ duration: transitionDuration, ease }}>
               <Image src={item.url} alt={item.title} sizes="(max-width: 800px) 280px, 50vw" loading="lazy" draggable={false} />
             </motion.div>
             <div className="hover-gallery-shade" aria-hidden="true" />
             <button ref={node => { buttons.current[index] = node; }} className="hover-gallery-select" aria-label={`Explore ${item.title}`} aria-expanded={isActive} aria-controls={isActive ? `${id}-${index}` : undefined}
               onClick={() => { activate(index); onImageClick?.(index, item); }} onKeyDown={event => keyDown(event, index)} />
-            {!isActive && <span className="hover-gallery-strip-title" aria-hidden="true">{item.title}</span>}
+            <motion.span className="hover-gallery-strip-title" aria-hidden="true" animate={{ opacity: isActive ? 0 : 1 }} transition={{ duration: .2 }}>{item.title}</motion.span>
             <AnimatePresence initial={false}>
               {isActive && <motion.div id={`${id}-${index}`} className="hover-gallery-details" key="details"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .2 }}>
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: .35, delay: .12, ease } }} exit={{ opacity: 0, transition: { duration: .12 } }}>
                 <p className="hover-gallery-category">{item.category}</p>
                 <h3>{item.title}</h3>
                 <p className="hover-gallery-description">{item.description}</p>

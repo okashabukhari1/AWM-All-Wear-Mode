@@ -98,3 +98,12 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - At 320px the expanded panel fits its gallery container at approximately 237px wide, including all product controls, with zero horizontal document overflow. At 390px it is 280px wide. Horizontal overflow is contained inside the gallery.
 - Reduced motion retains a static product grid. The OS setting and physical touch hardware were not emulated; reduced motion is covered by the static-rendering test.
 - Production build and all 18 remaining tests passed: shopping state, readiness and static rendering. Captures: awm-hover-gallery-desktop.png and awm-hover-gallery-mobile.png.
+
+## Modest fashion imagery and smoother hover
+
+- The eight featured products now use local Pexels fashion references: traditional menswear and contemporary hijab styling. Gallery and linked product/quick-view surfaces share their catalogue image data. Credits are in fashion-image-sources.md.
+- Removed the instant active-card minimum-width change. Width, neighbouring tilt, zoom, shade and image filters use the same 650ms easing curve; pointer selection has 80ms intent and leaving has a short grace period. Product copy fades in after expansion starts.
+- Browser observations captured intermediate expansion widths from 121px through 176px, 216px and 263px to 276px, rather than an immediate jump. A pointer drag into a card selected it with no gallery control focused, verifying hover activation separately from keyboard selection.
+- At 1440px, the gallery stayed 1040px wide and its expanded card measured about 278px. All eight local images loaded. Quick view displayed the matching local image.
+- At 390px, the selected card settled at 280px with no horizontal document overflow. The product link opened the matching women’s piece with its new local photo. No browser warnings or errors were captured. Desktop and mobile screenshots were updated.
+- Production build and all 19 tests passed, including a storage-version migration test preserving cart, wishlist, profile, edited price/stock and an admin image upload.

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { seedProducts, seedProfiles, variantKey, itemKey } from "./data";
+import { seedProducts, seedProfiles, variantKey, itemKey, photo } from "./data";
 const memory = new Map<string, string>();
 Object.defineProperty(globalThis, "localStorage", {
   value: {
@@ -52,6 +52,26 @@ describe("catalogue integrity", () => {
   });
 });
 describe("persistent shopping and inventory", () => {
+  it("refreshes legacy gallery imagery without changing shopping state or admin uploads", async () => {
+    const products = structuredClone(seedProducts);
+    products[0].images = [photo("photo-1521572163474-6864f9cf17ab"), photo("photo-1521572163474-6864f9cf17ab", 1400)];
+    products[0].price = 3333;
+    products[0].stock["Stone|M"] = 3;
+    products[5].images = ["/admin-upload.jpg"];
+    memory.set("awm-demo-v1", JSON.stringify({ version: 1, state: {
+      products, cart: [item], wishlist: ["p1"], orders: [], profiles: seedProfiles, session: details.customer,
+    } }));
+    await useStore.persist.rehydrate();
+    const state = useStore.getState();
+    expect(state.products[0].images).toEqual(seedProducts[0].images);
+    expect(state.products[0].price).toBe(3333);
+    expect(state.products[0].stock["Stone|M"]).toBe(3);
+    expect(state.products[5].images).toEqual(["/admin-upload.jpg"]);
+    expect(state.cart).toEqual([item]);
+    expect(state.wishlist).toEqual(["p1"]);
+    expect(state.session).toEqual(details.customer);
+    expect(JSON.parse(memory.get("awm-demo-v1")!).version).toBe(2);
+  });
   it("preserves variants and merges only equal variants", () => {
     const s = useStore.getState();
     s.add(item);

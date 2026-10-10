@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { seedProducts, seedProfiles, variantKey, itemKey } from "./data";
+import { seedProducts, seedProfiles, variantKey, itemKey, refreshProductImagery } from "./data";
 import type { Product, CartItem, Profile, Order } from "./data";
 interface State {
   products: Product[];
@@ -193,8 +193,8 @@ export const useStore = create<State>()(
     }),
     {
       name: "awm-demo-v1",
-      version: 1,
-      migrate: (persisted) => {
+      version: 2,
+      migrate: (persisted, version) => {
         const previous = persisted as Partial<State>;
         return {
           cart: previous.cart || [],
@@ -204,6 +204,7 @@ export const useStore = create<State>()(
           session: previous.session || null,
           products:
             previous.products?.map((p) => {
+              if (version >= 1) return refreshProductImagery(p);
               const seed = seedProducts.find((seed) => seed.id === p.id);
               return seed ? { ...p, images: seed.images } : p;
             }) || seedProducts,

@@ -81,9 +81,11 @@ No backend, database, real authentication, email provider, payment processor, sh
 
 ## Trending hover gallery
 
-The homepage trending section uses Lightswind's 3D Hover Gallery, installed with `npx lightswind@latest add 3d-hover-gallery` and adapted to the supplied source reference. The gallery is centered with a maximum width of 1,040px; active product cards remain between 280px and 320px on desktop. Hover, focus or click expands a product while neighbouring panels tilt. Arrow keys and Home/End select products; Escape collapses the desktop selection. Autoplay is disabled.
+The homepage trending section uses Lightswind's 3D Hover Gallery, installed with `npx lightswind@latest add 3d-hover-gallery` and adapted to the supplied source reference. The gallery is centered with a maximum width of 1,040px; the expanded desktop card is approximately 280px at the maximum gallery width and scales down with its container. Width, tilt, zoom, shade and image filters share a 650ms easing curve, with 80ms pointer intent to prevent flickering across panels. Hover, focus or click expands a product while neighbouring panels tilt. Arrow keys and Home/End select products; Escape collapses the desktop selection. Autoplay is disabled.
 
 Product names, prices, colours, wishlist controls, product links and size-selected quick-add are connected to the existing catalogue and store. On narrow screens a contained horizontal gallery supports scrolling and tapping, and expanded cards fit the gallery's own width. Reduced motion displays the same products in a static grid.
+
+The eight featured products use local modest fashion editorial images, including hijab styling and traditional menswear. The same assets appear in their linked product pages and quick views. [Photo sources and credits](docs/fashion-image-sources.md) document these stock references. Storage version 2 refreshes only their previous default imagery, preserving admin uploads and shopping state.
 
 The previous 3D ring component and its rotation helpers were removed. Scroll Dissolve Reveal remains removed; the editorial campaign uses a regular image and collection link. Framer Motion handles the hover gallery, and the site's existing entrances use GSAP.
 

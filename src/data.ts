@@ -145,6 +145,17 @@ const names = [
     "Studio Sweatshirt",
   ],
 ];
+// Local editorial references for the eight pieces featured in the home gallery.
+// Source pages and photographer credits are recorded in docs/fashion-image-sources.md.
+const modestEditorialImages: Record<string, string[]> = Object.fromEntries(
+  [["p1", 8422463], ["p6", 8565461], ["p13", 5416865], ["p18", 35565653],
+   ["p25", 31175112], ["p30", 30334302], ["p37", 30611702], ["p42", 33713362]]
+    .map(([id, photoId]) => [id, [`/images/modest-fashion/${photoId}.jpg`]]),
+);
+const legacyImages = (gender: Gender, category: string, n: number) =>
+  gender === "Women" && womenShots[category]
+    ? womenShots[category]
+    : [shots[category][n % 2], shots[category][(n + 1) % 2]];
 export const seedProducts: Product[] = Array.from({ length: 48 }, (_, i) => {
   const gender: Gender = i < 24 ? "Men" : "Women";
   const n = i % 24;
@@ -164,10 +175,7 @@ export const seedProducts: Product[] = Array.from({ length: 48 }, (_, i) => {
     description: `An easy ${category.toLowerCase().replace(/s$/, "")} with a considered fit and a clean silhouette. Made for layering, moving, and making it your own. Part of the AWM everyday edit.`,
     price:
       [2490, 4490, 5990, 5490, 8490, 6490][Math.floor(n / 4)] + (n % 4) * 300,
-    images:
-      gender === "Women" && womenShots[category]
-        ? womenShots[category]
-        : [shots[category][n % 2], shots[category][(n + 1) % 2]],
+    images: modestEditorialImages[`p${i + 1}`] || legacyImages(gender, category, n),
     sizes,
     colors,
     stock: Object.fromEntries(
@@ -181,6 +189,16 @@ export const seedProducts: Product[] = Array.from({ length: 48 }, (_, i) => {
     active: true,
   };
 });
+export function refreshProductImagery(product: Product): Product {
+  const seed = seedProducts.find(candidate => candidate.id === product.id);
+  if (!seed || !modestEditorialImages[product.id] || !product.images.length) return product;
+  const n = (Number(seed.id.slice(1)) - 1) % 24;
+  const original = legacyImages(seed.gender, seed.category, n);
+  // Keep admin uploads and every other stored product field intact.
+  return product.images.every(image => original.includes(image))
+    ? { ...product, images: seed.images }
+    : product;
+}
 export const seedProfiles: Profile[] = [
   { name: "Demo Customer One", email: "customer.one@example.test" },
   { name: "Demo Customer Two", email: "customer.two@example.test" },
