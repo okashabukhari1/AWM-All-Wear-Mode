@@ -1,5 +1,6 @@
 {
   "assetRoot": "/animations/awm-outfit-sequence-clean",
+  "revision": 3,
   "count": 335,
   "criticalFrames": [
     1,
@@ -701,6 +702,5 @@
         162
       ]
     }
-  ],
-  "revision": 2
+  ]
 }

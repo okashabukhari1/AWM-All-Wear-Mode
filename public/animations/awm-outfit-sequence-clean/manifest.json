@@ -1,5 +1,6 @@
 {
   "assetRoot": "/animations/awm-outfit-sequence-clean",
+  "revision": 3,
   "count": 335,
   "criticalFrames": [
     1,
@@ -712,12 +713,11 @@
     353,
     675
   ],
-  "desktopBytes": 5394504,
-  "mobileBytes": 5335472,
-  "encoding": "Desktop WebP quality 88; mobile 480px high WebP quality 84; exact alpha",
-  "matting": "U2-Net seeds, GrabCut edges, 1px contour contraction, nearest-interior edge colors, RGB-only green despill",
+  "desktopBytes": 7424144,
+  "mobileBytes": 5775228,
+  "encoding": "Desktop WebP quality 92; mobile 480px high WebP quality 88; smooth alpha",
+  "matting": "U2-Net seeds, GrabCut, continuous smoothed alpha, interpolated clean edge colors, RGB-only green despill",
   "modelSource": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx",
   "modelMD5": "60024c5c889badc19c04ad937298a77b",
-  "limitation": "Original source forearms/hands are preserved. The clip boundary is a direct cut.",
-  "revision": 2
+  "limitation": "Original source forearms/hands are preserved. The clip boundary is a direct cut."
 }

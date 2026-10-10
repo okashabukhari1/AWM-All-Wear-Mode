@@ -26,7 +26,7 @@ SOURCES = [
     ("walking", "Ghost_mannequin_walking_color_tr__20261010152817_frames"),
 ]
 ASSET_ROOT = "/animations/awm-outfit-sequence-clean"
-MATTE_REVISION = 2
+MATTE_REVISION = 3
 OUT = ROOT / "public" / ASSET_ROOT.lstrip("/")
 MODEL_URL = "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx"
 MODEL_MD5 = "60024c5c889badc19c04ad937298a77b"
@@ -45,33 +45,32 @@ def initialize(model):
 
 
 def clean_edges(rgb, alpha):
-    """Remove the screen fringe and reconstruct border RGB from clean fabric."""
+    """Regularize the silhouette and produce a soft, decontaminated matte."""
     rgb = rgb.copy()
     r, g, b = rgb.astype(float).transpose(2, 0, 1)
-    distance = cv2.distanceTransform(alpha, cv2.DIST_L2, 5)
-    # Screen-colored pixels beside the contour are backdrop residue. Interior
-    # folds are protected; sage fabric has substantially more red than screen.
+    # Close single-pixel notches, then smooth the contour as a continuous field.
+    # No screen-color pixel deletions or repeated erosion: those tear corners.
+    alpha = cv2.morphologyEx(alpha, cv2.MORPH_CLOSE,
+                            cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)))
+    coverage = cv2.GaussianBlur(alpha.astype(np.float32) / 255, (0, 0), 1.05)
+    coverage = np.clip((coverage - .20) / .65, 0, 1)
+    coverage = coverage * coverage * (3 - 2 * coverage)
+    silhouette = (coverage >= .5).astype(np.uint8) * 255
+    distance = cv2.distanceTransform(silhouette, cv2.DIST_L2, 5)
     screen = (r / (g + 1) < .55) & (b / (g + 1) < .80) & (g > 65)
-    alpha = alpha.copy()
-    upper = np.arange(rgb.shape[0])[:, None] < rgb.shape[0] * .44
-    alpha[screen & (distance < 3) & upper] = 0
-    # Contract by one source pixel to remove the mixed screen/garment outline.
-    alpha = cv2.erode(alpha, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)))
-    distance = cv2.distanceTransform(alpha, cv2.DIST_L2, 5)
     core = ((distance >= 4) & ~screen).astype(np.uint8)
-    # Each boundary pixel gets the closest clean interior pixel's color. Unlike
-    # merely reducing green, this also removes the gray fringe on pale tees.
+    # Smooth interpolation of clean interior colors avoids the blocky nearest-
+    # pixel border from revision 2. The fallback handles narrow fingers/gaps.
     _, nearest = cv2.distanceTransformWithLabels(1 - core, cv2.DIST_L2, 5,
                                                  labelType=cv2.DIST_LABEL_PIXEL)
     colors = np.zeros((int(nearest.max()) + 1, 3), dtype=np.uint8)
     colors[nearest[core > 0]] = rgb[core > 0]
-    border = (alpha > 0) & (distance < 4)
-    rgb[border] = colors[nearest[border]]
-    alpha = cv2.GaussianBlur(alpha, (3, 3), .55)
-    # Extend clean RGB into the fractional-alpha row to avoid green bleed when
-    # browsers interpolate the image. Transparent RGB is zeroed for export.
-    fringe = (alpha > 0) & (distance < 4)
-    rgb[fringe] = colors[nearest[fringe]]
+    weight = cv2.GaussianBlur(core.astype(np.float32), (0, 0), 2)
+    weighted_color = cv2.GaussianBlur(rgb.astype(np.float32) * core[:, :, None], (0, 0), 2)
+    clean = weighted_color / np.maximum(weight[:, :, None], 1e-6)
+    clean[weight < 1e-4] = colors[nearest[weight < 1e-4]]
+    blend = np.clip((4 - distance) / 2, 0, 1)[:, :, None]
+    rgb = np.clip(rgb * (1 - blend) + clean * blend, 0, 255).astype(np.uint8)
     # RGB-only despill for stronger reflections on trousers and footwear.
     lower = np.clip((np.arange(rgb.shape[0])[:, None] / rgb.shape[0] - .44) / .04, 0, 1)
     r, g, b = rgb.astype(float).transpose(2, 0, 1)
@@ -79,6 +78,7 @@ def clean_edges(rgb, alpha):
     spill = (np.clip((g / (neutral + 1) - 1.10) / .20, 0, 1)
              * np.clip((g / (r + 1) - 1.22) / .30, 0, 1) * lower)
     rgb[:, :, 1] = (g - spill * np.maximum(g - neutral - 5, 0)).astype(np.uint8)
+    alpha = np.rint(coverage * 255).astype(np.uint8)
     rgba = np.dstack((rgb, alpha))
     rgba[alpha == 0, :3] = 0
     return Image.fromarray(rgba)
@@ -108,6 +108,10 @@ def matte(path):
     _, labels, stats, _ = cv2.connectedComponentsWithStats(alpha, 8)
     kept = np.flatnonzero(stats[:, cv2.CC_STAT_AREA] >= 96)
     alpha = np.isin(labels, kept[kept != 0]).astype(np.uint8) * 255
+    # Retain original segmentation for inspecting future edge refinements.
+    mask_cache = ROOT / ".qa/matte-masks" / path.parent.name
+    mask_cache.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(alpha).save(mask_cache / f"{path.stem}.png")
     x, y = INPUT_CROP[:2]
     return clean_edges(rgb, alpha).crop((OUTPUT_CROP[0] - x, OUTPUT_CROP[1] - y,
                                      OUTPUT_CROP[2] - x, OUTPUT_CROP[3] - y))
@@ -117,10 +121,10 @@ def encode(item):
     index, path = item
     image = matte(path)
     target = OUT / f"frame_{index:04d}.webp"
-    image.save(target, "WEBP", quality=88, method=4, exact=True)
+    image.save(target, "WEBP", quality=92, method=4, exact=True)
     mobile = image.resize((round(image.width * 480 / image.height), 480), Image.Resampling.LANCZOS)
     mobile_target = OUT / "mobile" / target.name
-    mobile.save(mobile_target, "WEBP", quality=84, method=4, exact=True)
+    mobile.save(mobile_target, "WEBP", quality=88, method=4, exact=True)
     return {"frame": index, "desktopBytes": target.stat().st_size,
             "mobileBytes": mobile_target.stat().st_size,
             "foregroundPixels": int(np.count_nonzero(np.asarray(image)[:, :, 3] > 127))}
@@ -182,8 +186,8 @@ def main():
     report = {**config, "crop": list(OUTPUT_CROP), "size": [353, 675],
               "desktopBytes": sum(item["desktopBytes"] for item in results),
               "mobileBytes": sum(item["mobileBytes"] for item in results),
-              "encoding": "Desktop WebP quality 88; mobile 480px high WebP quality 84; exact alpha",
-              "matting": "U2-Net seeds, GrabCut edges, 1px contour contraction, nearest-interior edge colors, RGB-only green despill",
+              "encoding": "Desktop WebP quality 92; mobile 480px high WebP quality 88; smooth alpha",
+              "matting": "U2-Net seeds, GrabCut, continuous smoothed alpha, interpolated clean edge colors, RGB-only green despill",
               "modelSource": MODEL_URL, "modelMD5": MODEL_MD5,
               "limitation": "Original source forearms/hands are preserved. The clip boundary is a direct cut."}
     (OUT / "manifest.json").write_text(json.dumps(report, indent=2) + "\n")

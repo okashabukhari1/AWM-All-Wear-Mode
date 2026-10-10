@@ -169,7 +169,7 @@ describe("website readiness", () => {
     expect(walkingFrames(true).at(-1)).toBe(335);
     expect(new Set(walkingFrames(true)).size).toBe(walkingFrames(true).length);
     expect(walkingFrames(true)).toEqual(expect.arrayContaining(CRITICAL_FRAMES));
-    expect(frameUrl(1, true)).toBe("/animations/awm-outfit-sequence-clean/mobile/frame_0001.webp?v=2");
+    expect(frameUrl(1, true)).toBe("/animations/awm-outfit-sequence-clean/mobile/frame_0001.webp?v=3");
   });
 
   it("runs every transformation frame before the walking clip and prepares both boundary poses", () => {
