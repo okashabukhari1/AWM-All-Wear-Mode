@@ -6,14 +6,8 @@ import {
   useState,
 } from "react";
 
-const FRAME_COUNT = 180;
-const MOBILE_FRAMES = [
-  ...Array.from({ length: 90 }, (_, i) => i * 2 + 1),
-  FRAME_COUNT,
-];
+import { FRAME_COUNT, frameUrl, walkingFrames } from "../../lib/walk-assets";
 export type WalkingSequenceHandle = { setProgress: (progress: number) => void };
-export const frameUrl = (index: number, mobile = false) =>
-  `/animations/awm-walk/${mobile ? "mobile/" : ""}frame_${String(index).padStart(4, "0")}.webp`;
 
 /** One persistent canvas. Progress comes exclusively from the parent's scroll timeline. */
 export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
@@ -51,9 +45,7 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
       if (!context) return;
       const images = new Map<number, HTMLImageElement>();
       const pending = new Set<number>();
-      const frames = mobile
-        ? MOBILE_FRAMES
-        : Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
+      const frames = walkingFrames(mobile);
       const desiredFrame = (value: number) =>
         frames[
           Math.min(

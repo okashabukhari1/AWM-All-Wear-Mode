@@ -96,6 +96,13 @@
 .loader-brand > p { font-size: 10px; letter-spacing: .5em; margin-top: 22px; }
 .loader-brand > svg { display: block; width: min(400px,65vw); height: 28px; margin: 24px auto 0; }
 .loader-stitch { fill: none; stroke: #bd8054; stroke-width: 1; stroke-dasharray: 440; }
+.loader-error { margin-top: 24px; font-size: 12px; }
+.loader-error button { margin-top: 12px; min-height: 44px; padding: 0 24px; border: 1px solid #1114; border-radius: 30px; }
+.header-actions > .mobile-admin-link { display: none; }
+@media (max-width: 800px) {
+  .header-actions { gap: 10px; }
+  .header-actions > .mobile-admin-link { display: flex; min-height: 32px; padding: 0 8px; font-size: 10px; border: 1px solid #1113; border-radius: 20px; }
+}
 .loader-bottom { bottom: 30px; }
 .loader-bottom > div { display: flex; align-items: center; gap: 20px; width: 34%; }
 .loader-progress-track { height: 1px; width: 100%; background: #1112; }

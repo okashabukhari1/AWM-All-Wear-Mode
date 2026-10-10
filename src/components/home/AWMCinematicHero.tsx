@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { WalkingOutfitSequence, frameUrl } from "./WalkingOutfitSequence";
+import { WalkingOutfitSequence } from "./WalkingOutfitSequence";
+import { frameUrl } from "../../lib/walk-assets";
 import type { WalkingSequenceHandle } from "./WalkingOutfitSequence";
 import "../../styles/cinematic-hero.css";
 

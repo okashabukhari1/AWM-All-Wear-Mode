@@ -64,6 +64,8 @@ export const imagery = {
   women: photo("photo-1539109136881-3be0616acf4b"),
   men: photo("photo-1617137968427-85924c800a22"),
   campaign: photo("photo-1524504388940-b1c1722653e1", 1600),
+  drop: photo("photo-1556821840-3a63f95609a7", 1400),
+  lookbook: photo("photo-1551232864-3f0890e580d9", 1200),
 };
 const shots: Record<string, string[]> = {
   "T-Shirts": [

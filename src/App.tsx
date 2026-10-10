@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,20 +8,32 @@ import { useStore } from "./store";
 import Home from "./pages/Home";
 import { BrandPreloader } from "./components/BrandPreloader";
 import SiteMotion from "./components/SiteMotion";
-const Catalog = lazy(() => import("./pages/Catalog"));
-const ProductPage = lazy(() => import("./pages/Product"));
-const Shopping = lazy(() => import("./pages/Shopping"));
-const Account = lazy(() => import("./pages/Account"));
-const Information = lazy(() => import("./pages/Information"));
-const Admin = lazy(() => import("./pages/Admin"));
+import { pageLoaders } from "./page-loaders";
+const Catalog = lazy(pageLoaders.catalog);
+const ProductPage = lazy(pageLoaders.product);
+const Shopping = lazy(pageLoaders.shopping);
+const Account = lazy(pageLoaders.account);
+const Information = lazy(pageLoaders.information);
+const Admin = lazy(pageLoaders.admin);
+
+function PageReady({ onReady }: { onReady: () => void }) {
+  useLayoutEffect(onReady, [onReady]);
+  return null;
+}
 gsap.registerPlugin(ScrollTrigger);
 export default function App() {
   const location = useLocation();
   const ref = useRef<HTMLDivElement>(null);
   const toast = useStore((s) => s.toast);
   const admin = location.pathname.startsWith("/admin");
-  const [loading, setLoading] = useState(() => location.pathname === "/" && !sessionStorage.getItem("awm-critical-ready") && !matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const finishLoading = () => { sessionStorage.setItem("awm-critical-ready", "1"); setLoading(false); };
+  const [phase, setPhase] = useState<"loading" | "revealing" | "ready">("loading");
+  const [routesReady, setRoutesReady] = useState(false);
+  const [page] = useState(() => {
+    let resolve!: () => void;
+    const promise = new Promise<void>(done => { resolve = done; });
+    return { promise, resolve };
+  });
+  const loading = phase !== "ready";
   useEffect(() => {
     if (loading) return;
     let alive = true;
@@ -91,15 +103,15 @@ export default function App() {
   }, [toast]);
   return (
     <>
-      <SiteMotion ready={!loading} />
-      {loading && <BrandPreloader onReady={finishLoading} />}
-      <div className="app-shell" inert={loading}>
+      <SiteMotion ready={phase !== "loading"} />
+      {loading && <BrandPreloader waitForPage={page.promise} onRoutesReady={() => setRoutesReady(true)} onReveal={() => setPhase("revealing")} onReady={() => setPhase("ready")} />}
+      <div className="app-shell" inert={loading} aria-hidden={loading || undefined} style={{ visibility: phase === "loading" ? "hidden" : "visible" }}>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
       {!admin && <Header />}
       <div ref={ref}>
-        <Suspense
+        {routesReady && <Suspense
           fallback={
             <main className="loading" id="main">
               Setting the mode…
@@ -146,7 +158,8 @@ export default function App() {
               <Route key={path} path={path} element={<Information />} />
             ))}
           </Routes>
-        </Suspense>
+          <PageReady onReady={page.resolve} />
+        </Suspense>}
       </div>
       {!admin && <Footer />}
       <CartDrawer />

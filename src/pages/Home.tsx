@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { imagery, money, photo } from "../data";
+import { imagery, money } from "../data";
 import { useStore } from "../store";
 import { ArrowLink, ProductCard } from "../components";
 export default function Home() {
@@ -149,7 +149,7 @@ export default function Home() {
           <div className="signature-image">
             <Image
               className="signature-photo"
-              src={photo("photo-1556821840-3a63f95609a7", 1400)}
+              src={imagery.drop}
               alt="Signature heavyweight hoodie editorial reference"
               loading="lazy"
             />
@@ -289,7 +289,7 @@ export default function Home() {
         <div className="new-drop-grid">
           <Link to="/new-arrivals" className="editorial-card">
             <Image
-              src={photo("photo-1551232864-3f0890e580d9", 1200)}
+              src={imagery.lookbook}
               alt="A considered edit of contemporary clothing"
               loading="lazy"
             />

@@ -1,64 +1,88 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { useStore } from "../store";
+import { prepareWebsite } from "../lib/preload";
 
-/** The counter measures settled critical asset requests, never elapsed time. */
-export function BrandPreloader({ onReady }: { onReady: () => void }) {
+export function BrandPreloader(props: {
+  waitForPage: Promise<void>;
+  onRoutesReady: () => void;
+  onReveal: () => void;
+  onReady: () => void;
+}) {
   const root = useRef<HTMLDivElement>(null);
-  const close = useRef(onReady);
-  close.current = onReady;
-  const [settled, setSettled] = useState(0);
+  const callbacks = useRef(props);
+  callbacks.current = props;
+  const [progress, setProgress] = useState({ settled: 0, total: 1 });
+  const [prepared, setPrepared] = useState(false);
   const [failed, setFailed] = useState(false);
-  const total = 3;
-  const percent = Math.round(settled / total * 100);
+  const percent = Math.floor(progress.settled / progress.total * 100);
 
   useEffect(() => {
+    const controller = new AbortController();
     let alive = true;
     const previous = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
-    root.current?.querySelector<HTMLButtonElement>("button")?.focus();
-    const finish = (ok: boolean) => { if (alive) { setSettled(value => value + 1); if (!ok) setFailed(true); } };
-    const mobile = matchMedia("(max-width: 767px)").matches;
-    const images = [1, 180].map(index => {
-      const image = new Image();
-      image.onload = () => finish(true);
-      image.onerror = () => finish(false);
-      image.src = `/animations/awm-walk/${mobile ? "mobile/" : ""}frame_${String(index).padStart(4, "0")}.webp`;
-      return image;
+    root.current?.focus();
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const context = gsap.context(() => {
+        gsap.fromTo(".loader-letter", { yPercent: 115 }, { yPercent: 0, stagger: .07, duration: .55, ease: "power3.out" });
+        gsap.fromTo(".loader-stitch", { strokeDashoffset: 440 }, { strokeDashoffset: 0, duration: .75, ease: "power2.out" });
+      }, root);
+      return () => context.revert();
     });
-    (document.fonts?.ready || Promise.resolve()).then(() => finish(true), () => finish(false));
-    // This fallback bypasses a stalled request; it does not invent progress.
-    const fallback = setTimeout(() => close.current(), 6000);
-    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") close.current(); };
-    document.addEventListener("keydown", escape);
-    const ctx = gsap.context(() => {
-      gsap.fromTo(".loader-letter", { yPercent: 115 }, { yPercent: 0, stagger: .07, duration: .55, ease: "power3.out" });
-      gsap.fromTo(".loader-stitch", { strokeDashoffset: 440 }, { strokeDashoffset: 0, duration: .75, ease: "power2.out" });
-    }, root);
+    prepareWebsite({
+      products: useStore.getState().products,
+      signal: controller.signal,
+      waitForPage: callbacks.current.waitForPage,
+      onRoutesReady: () => callbacks.current.onRoutesReady(),
+      onProgress: (settled, total) => { if (alive) setProgress({ settled, total }); },
+    }).then(() => { if (alive) setPrepared(true); }).catch(() => {
+      if (!alive || controller.signal.aborted) return;
+      setFailed(true);
+      controller.abort();
+      requestAnimationFrame(() => root.current?.querySelector<HTMLButtonElement>("button")?.focus());
+    });
     return () => {
-      alive = false; clearTimeout(fallback); document.removeEventListener("keydown", escape);
-      images.forEach(image => { image.onload = null; image.onerror = null; });
-      document.body.style.overflow = previous; ctx.revert();
+      alive = false;
+      controller.abort();
+      document.body.style.overflow = previous;
+      media.revert();
+      if (previousFocus?.isConnected && previousFocus !== document.body) previousFocus.focus();
     };
   }, []);
 
   useEffect(() => {
     const line = root.current?.querySelector(".loader-progress-line");
     if (!line) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(line, { scaleX: percent / 100 });
+      return;
+    }
     const tween = gsap.to(line, { scaleX: percent / 100, duration: .2, ease: "power1.out" });
     return () => { tween.kill(); };
   }, [percent]);
 
   useEffect(() => {
-    if (settled < total) return;
-    const tween = gsap.to(root.current, { yPercent: -100, duration: .5, ease: "power3.inOut", onComplete: () => close.current() });
+    if (!prepared) return;
+    callbacks.current.onReveal();
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      callbacks.current.onReady();
+      return;
+    }
+    const tween = gsap.to(root.current, { yPercent: -100, duration: .5, ease: "power3.inOut", onComplete: () => callbacks.current.onReady() });
     return () => { tween.kill(); };
-  }, [settled]);
+  }, [prepared]);
 
-  return <div ref={root} className="brand-loader" role="dialog" aria-modal="true" aria-label="Preparing your AWM experience" onKeyDown={event => { if (event.key === "Tab") { event.preventDefault(); root.current?.querySelector<HTMLButtonElement>("button")?.focus(); } }}>
-    <div className="loader-top"><span>AWM STUDIO / ALL WEAR MODE</span><button onClick={onReady}>SKIP INTRO ↗</button></div>
-    <div className="loader-brand" onPointerMove={event => { if (event.pointerType !== "mouse") return; const box = event.currentTarget.getBoundingClientRect(); gsap.to(event.currentTarget, { x: (event.clientX-box.left-box.width/2)*.035, y: (event.clientY-box.top-box.height/2)*.05, duration: .3, overwrite: true }); }} onPointerLeave={event => gsap.to(event.currentTarget, { x:0, y:0, duration:.4 })}>
+  return <div ref={root} tabIndex={-1} className="brand-loader" role="dialog" aria-modal="true" aria-label="Preparing your AWM experience" onKeyDown={event => {
+    if (event.key === "Tab") { event.preventDefault(); (root.current?.querySelector<HTMLButtonElement>("button") || root.current)?.focus(); }
+  }}>
+    <div className="loader-top"><span>AWM STUDIO / ALL WEAR MODE</span><span>PLEASE WAIT</span></div>
+    <div className="loader-brand">
       <div className="loader-wordmark" aria-label="AWM">{"AWM".split("").map(letter => <span key={letter}><i className="loader-letter">{letter}</i></span>)}</div><p>ALL WEAR MODE</p><svg viewBox="0 0 440 28" aria-hidden="true"><path className="loader-stitch" d="M0 14 H170 C185 14 185 1 200 1 S215 27 230 27 S245 14 260 14 H440" /></svg>
+      {failed && <div className="loader-error" role="alert"><p>We couldn’t finish loading your experience.</p><button onClick={() => window.location.reload()}>RETRY ↗</button></div>}
     </div>
-    <div className="loader-bottom"><span>{failed ? "YOUR MODE IS READY. SOME ASSETS WILL USE A FALLBACK." : "FIND YOUR MODE."}</span><div role="progressbar" aria-label="Critical assets prepared" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><div className="loader-progress-track"><i className="loader-progress-line" /></div><span>{String(percent).padStart(2,"0")}%</span></div></div>
+    <div className="loader-bottom"><span>{failed ? "CHECK YOUR CONNECTION AND TRY AGAIN." : "PREPARING YOUR WARDROBE."}</span><div role="progressbar" aria-label="Website loaded" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><div className="loader-progress-track"><i className="loader-progress-line" /></div><span>{String(percent).padStart(2,"0")}%</span></div></div>
   </div>;
 }

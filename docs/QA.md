@@ -42,7 +42,7 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - 26 representative routes were reloaded at both 320px and 1440px, with heading content and zero horizontal document overflow. See `route-audit.json` for the executed paths and collected links. No warning/error logs were captured in this pass.
 - Homepage checked at 320, 375, 390, 430, 768, 1024, 1280, 1440 and 1920px: zero horizontal overflow, zero cinema-frame nodes, no overflowing testimonial text.
 - Source-frame progression observed forward and backward. The store anchor reaches frame 180/progress 1; reloading at #perspective retains the final pose and lands below the header.
-- The asset preloader reached measured 100% and exited. It did not replay during route navigation. Failure/bypass paths were reviewed in source, not simulated by browser network interception.
+- The earlier critical-asset loader reached measured 100% and exited. That loader was replaced by the full website boot gate described below.
 - Card Black colour selection carried into quick view. Black / M was added to the bag and confirmed in its line item; that QA addition was removed afterward. Existing wishlist/order records were preserved.
 - Desktop dialog confirmed body-level portal, full viewport placement, opacity 1 and selected Black colour; no clipping from card hover transforms.
 - Round carousel previous/next controls wrap, pause works, and pointer dragging moved from story 3 to story 5 before settling. Mobile front-card copy fits, and vertical page scrolling remains available.
@@ -58,3 +58,14 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - Masked headline lines, staggered supporting controls, a cream-to-peach background and soft circular reveal surround the fixed canvas. Hidden starting states are set before paint so delayed elements do not flash before their entrances.
 - 320×667, 375×812, 390×844, 430×932, and desktop widths 768/1024/1280/1440/1920: no horizontal overflow, no clipped title, both shopping links remain inside the hero, and circle centering error is below 0.001px.
 - Saved latest desktop and mobile captures as awm-minimal-hero-desktop.jpg and awm-minimal-hero-mobile.jpg.
+
+
+## Website readiness and Admin navigation
+
+- Production build and all 18 tests passed: the previous 11 checks plus seven readiness checks for final-task completion, request concurrency, cancellation, required-asset failure, image deduplication, viewport pose coverage, and page/font readiness.
+- On fresh Home loads and refreshes, the observed loader showed measured progress while the app shell stayed hidden and inert. After it exited, every homepage image had complete=true and a nonzero naturalWidth, fonts were loaded, and the walking canvas reported ready.
+- Direct Admin and product URL loads showed the loader, then their correct route content with loaded images and fonts. In-app navigation did not replay it.
+- Desktop Admin navbar link, mobile Admin header link, and the mobile menu Admin link all opened /admin. The menu closed after navigation.
+- Navbar checked at 320, 768, 1024, and 1440px: no horizontal document overflow or overlapping header controls. Browser console recorded no warnings/errors during this pass.
+- Mocked asynchronous tests kept readiness pending while fonts were delayed and rejected a missing walking frame. Browser network failure interception and OS-level reduced-motion emulation were not performed.
+- Captures: loader-readiness-desktop.png, loader-readiness-mobile.png, navbar-admin-desktop.png, navbar-admin-mobile.png.

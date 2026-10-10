@@ -1,4 +1,5 @@
 import type { ImgHTMLAttributes } from "react";
+import { IMAGE_WIDTHS, responsiveSources } from "./lib/image-assets";
 
 /** Keep responsive image delivery and the documented editorial fallback in one place. */
 export function Image({
@@ -9,10 +10,7 @@ export function Image({
 }: ImgHTMLAttributes<HTMLImageElement>) {
   const responsive = src?.startsWith("https://images.unsplash.com/");
   const srcSet = responsive
-    ? [480, 900, 1600]
-        .map(
-          (width) => `${src!.replace(/([?&])w=\d+/, `$1w=${width}`)} ${width}w`,
-        )
+    ? responsiveSources(src!).map((url, index) => `${url} ${IMAGE_WIDTHS[index]}w`)
         .join(", ")
     : undefined;
   return (

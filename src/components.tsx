@@ -164,6 +164,7 @@ export function Header() {
             ["Women", "/women"],
             ["New arrivals", "/new-arrivals"],
             ["The edit", "/trending"],
+            ["Admin", "/admin"],
           ].map(([label, to]) => (
             <Link key={to} to={to}>
               {label}
@@ -171,6 +172,7 @@ export function Header() {
           ))}
         </nav>
         <div className="header-actions">
+          <Link className="mobile-admin-link" to="/admin">Admin</Link>
           <button aria-label="Search products" onClick={() => setSearch(true)}>
             <Search size={20} />
           </button>
@@ -217,6 +219,7 @@ export function Header() {
               ["The edit", "/trending"],
               ["About AWM", "/about"],
               ["My account", "/account"],
+              ["Admin", "/admin"],
             ].map(([label, to]) => (
               <Link key={to} to={to} onClick={closeMenu}>
                 {label}
