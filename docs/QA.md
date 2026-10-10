@@ -121,3 +121,12 @@ The browser contains clearly named QA demo records from purchase testing; these 
 - At 1440px the compact hover gallery loaded all eight local 480px WebPs and displayed product controls. At 390px its selected panel settled at 280px wide with no horizontal document overflow. Tapping another card and View piece opened the matching product and loaded its local image. No warning/error browser logs were captured.
 - Fonts use self-hosted WOFF2 files; primary-family preload URLs resolve to hashed build assets. No default image/font external request is needed. Netlify/Cloudflare-style cache headers are supplied in public/_headers; hosts that do not consume this file need equivalent configuration.
 - Captures: optimized-home-desktop.png, optimized-home-mobile.png, optimized-gallery-desktop.png, optimized-gallery-mobile.png and optimized-walk-proof.jpg. Reduced motion was checked through static rendering and source lifecycle review; OS preference emulation and physical touch-device testing were not performed.
+
+## Reference-inspired hero — 10 October 2026
+
+- Changed only the hero component and its dedicated stylesheet. The new composition uses a bold left headline with an italic accent, a centered model and cream circle, a right-side new-season feature, and bottom campaign details. All colors come from the existing AWM hero palette; other page sections and the shared header remain unchanged.
+- Removed the introductory wordmark stage. The headline and shopping controls appear on page readiness, with GSAP entrances. The existing pinned walking sequence still advances with scrolling and keeps the outfit stationary.
+- Accounted for both header and announcement heights. The hero ends at the viewport bottom at 1440×900, 390×844 and approximately 667.2px at 320×667 (subpixel rounding). No horizontal document overflow was observed.
+- Browser scrolling advanced from frame 1 to frame 65 and returned to frame 1. Shop the edit opened /new-arrivals; Collection opened /collections/streetwear. No warning/error logs were captured.
+- Production build and all 36 existing tests passed. The first sandbox test attempt could not rename Vitest cache files; rerunning outside that restriction passed. Reduced motion remains covered by static rendering, without changing the user's OS preference.
+- Captures: awm-reference-hero-desktop.png and awm-reference-hero-mobile.png.
