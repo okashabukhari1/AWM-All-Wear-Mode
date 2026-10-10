@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WalkingOutfitSequence } from "./WalkingOutfitSequence";
-import { frameUrl } from "../../lib/walk-assets";
+import { FRAME_COUNT, frameUrl } from "../../lib/walk-assets";
 import { useWebsiteReady } from "../../lib/website-readiness";
 import type { WalkingSequenceHandle } from "./WalkingOutfitSequence";
 import "../../styles/cinematic-hero.css";
@@ -78,10 +78,10 @@ export default function AWMCinematicHero() {
     <div className="cinema-circle" aria-hidden="true" />
     <div className="cinema-accent" aria-hidden="true" />
     <div className="cinema-ground" aria-hidden="true" />
-    <div className="cinema-outfit" role="img" aria-label="Walking black oversized T-shirt, beige cargo trousers and white sneakers">
+    <div className="cinema-outfit" role="img" aria-label="Transforming streetwear outfit followed by a walking ghost mannequin in changing shirt and trouser colors">
       <picture>
-        <source media="(max-width: 767px)" srcSet={frameUrl(reduced ? 180 : 1, true)} />
-        <img src={frameUrl(reduced ? 180 : 1)} alt="" fetchPriority="high" />
+        <source media="(max-width: 767px)" srcSet={frameUrl(reduced ? FRAME_COUNT : 1, true)} />
+        <img src={frameUrl(reduced ? FRAME_COUNT : 1)} alt="" fetchPriority="high" />
       </picture>
       {!reduced && <WalkingOutfitSequence ref={sequence} />}
     </div>

@@ -36,7 +36,7 @@ describe("static reduced-motion experience", () => {
     expect(html).toContain('class="cinema-hero is-static"');
     expect(html).not.toContain("<canvas");
     expect(html).not.toContain("cinema-frame");
-    expect(html).toContain("frame_0180.webp");
+    expect(html).toContain("frame_0335.webp");
     expect(html).toContain("SHOP THE EDIT");
     expect(html).toContain("COLLECTION");
     expect(html).toContain('href="/collections/streetwear"');

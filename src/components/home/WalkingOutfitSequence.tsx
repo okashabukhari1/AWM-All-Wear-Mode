@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 
-import { FRAME_COUNT, frameUrl, walkingFrames, takePreparedWalkingFrame } from "../../lib/walk-assets";
+import { CRITICAL_FRAMES, frameUrl, walkingFrames, takePreparedWalkingFrame } from "../../lib/walk-assets";
 import { useWebsiteReady } from "../../lib/website-readiness";
 export type WalkingSequenceHandle = { setProgress: (progress: number) => void };
 
@@ -58,13 +58,7 @@ export const WalkingOutfitSequence = forwardRef<WalkingSequenceHandle>(
         ];
       const queue = [
         desiredFrame(progress.current),
-        1,
-        FRAME_COUNT,
-        31,
-        61,
-        91,
-        121,
-        151,
+        ...CRITICAL_FRAMES,
         ...frames,
       ];
       let alive = true,

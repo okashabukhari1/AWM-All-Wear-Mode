@@ -4,6 +4,7 @@ dist/
 .qa/
 .npm-cache/
 *.tsbuildinfo
+__pycache__/
 .env
 .env.*
 !.env.example

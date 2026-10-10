@@ -1,5 +1,7 @@
-export const FRAME_COUNT = 180;
-export const CRITICAL_FRAMES = [1, 31, 61, 91, 121, 151, FRAME_COUNT];
+import sequence from "./walk-sequence.json";
+export const FRAME_COUNT = sequence.count;
+export const CRITICAL_FRAMES = sequence.criticalFrames;
+export const WALK_SEGMENTS = sequence.segments;
 const prepared = new Map<string, HTMLImageElement>();
 const key = (index: number, mobile: boolean) => `${mobile}:${index}`;
 export function rememberWalkingFrame(index: number, mobile: boolean, image: HTMLImageElement) {
@@ -10,9 +12,9 @@ export function takePreparedWalkingFrame(index: number, mobile: boolean) {
   prepared.delete(id);
   return image;
 }
-export const MOBILE_FRAMES = [...Array.from({ length: 90 }, (_, i) => i * 2 + 1), FRAME_COUNT];
+export const MOBILE_FRAMES = sequence.mobileFrames;
 export const walkingFrames = (mobile: boolean) => mobile
   ? MOBILE_FRAMES
   : Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
 export const frameUrl = (index: number, mobile = false) =>
-  `/animations/awm-walk/${mobile ? "mobile/" : ""}frame_${String(index).padStart(4, "0")}.webp`;
+  `${sequence.assetRoot}/${mobile ? "mobile/" : ""}frame_${String(index).padStart(4, "0")}.webp?v=${sequence.revision}`;

@@ -92,7 +92,7 @@ export async function prepareWebsite(options: {
     try { await image.decode(); }
     catch (error) {
       signal.throwIfAborted();
-      if ((image.currentSrc || image.src).includes("/animations/awm-walk/")) throw error;
+      if ((image.currentSrc || image.src).includes("/animations/awm-outfit-sequence-clean/")) throw error;
       await fallback;
       image.removeAttribute("srcset");
       image.src = "/reference.svg";

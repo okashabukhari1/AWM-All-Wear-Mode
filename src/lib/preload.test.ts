@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { prepareWebsite, runLoadQueue } from "./preload";
 import { uniqueImageSources } from "./image-assets";
-import { frameUrl, walkingFrames } from "./walk-assets";
+import { CRITICAL_FRAMES, WALK_SEGMENTS, frameUrl, walkingFrames } from "./walk-assets";
 
 vi.mock("../page-loaders", () => ({ pageLoaderFor: vi.fn(() => async () => ({})) }));
 afterEach(() => vi.unstubAllGlobals());
@@ -164,10 +164,20 @@ describe("website readiness", () => {
   });
 
   it("retains every pose used by the desktop or mobile canvas", () => {
-    expect(walkingFrames(false)).toHaveLength(180);
-    expect(walkingFrames(true)).toHaveLength(91);
-    expect(walkingFrames(true).at(-1)).toBe(180);
-    expect(new Set(walkingFrames(true)).size).toBe(91);
-    expect(frameUrl(1, true)).toBe("/animations/awm-walk/mobile/frame_0001.webp");
+    expect(walkingFrames(false)).toHaveLength(335);
+    expect(walkingFrames(true)).toEqual(walkingFrames(false));
+    expect(walkingFrames(true).at(-1)).toBe(335);
+    expect(new Set(walkingFrames(true)).size).toBe(walkingFrames(true).length);
+    expect(walkingFrames(true)).toEqual(expect.arrayContaining(CRITICAL_FRAMES));
+    expect(frameUrl(1, true)).toBe("/animations/awm-outfit-sequence-clean/mobile/frame_0001.webp?v=2");
+  });
+
+  it("runs every transformation frame before the walking clip and prepares both boundary poses", () => {
+    expect(WALK_SEGMENTS.map(({ name, start, end, count }) => ({ name, start, end, count }))).toEqual([
+      { name: "transformation", start: 1, end: 175, count: 175 },
+      { name: "walking", start: 176, end: 335, count: 160 },
+    ]);
+    expect(CRITICAL_FRAMES).toEqual(expect.arrayContaining([1, 175, 176, 335]));
+    expect(walkingFrames(true)).toEqual(expect.arrayContaining([175, 176]));
   });
 });

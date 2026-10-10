@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-Executed checks and their limits are recorded in [docs/QA.md](docs/QA.md). Latest preview captures: [desktop](docs/optimized-home-desktop.png) and [mobile](docs/optimized-home-mobile.png).
+Executed checks and their limits are recorded in [docs/QA.md](docs/QA.md). Latest hero captures: [desktop](docs/awm-new-sequence-desktop.png), [walking clip](docs/awm-new-sequence-walking.png), and [mobile](docs/awm-new-sequence-mobile.png).
 
 ## Stack and structure
 
@@ -53,15 +53,15 @@ The brand preloader runs on initial page loads, refreshes, and direct route entr
 
 The shared SiteMotion component gives routes, newly inserted catalogue results, typography, images, cards, forms, account/admin panels, navigation, newsletter and footer elements GSAP entrances and icon interactions. IntersectionObserver limits entrances to visible content; matchMedia cleanup supports live reduced-motion changes. Accordion answers and dialogs have their own entrances. The homepage retains manifesto motion and a regular editorial campaign image.
 
-`src/components/home/WalkingOutfitSequence.tsx` reuses the seven decoded boot poses, then prepares remaining images with four concurrent requests after readiness. Requested scroll poses get priority, and the component retains at most 48 decoded frames. It draws only when the pose or canvas dimensions change, caps DPR at 2, and cancels requests/observers on unmount. Desktop uses 180 poses; mobile uses 91 sampled poses at 239 × 480. The component responds to viewport changes. Reduced motion shows a static final frame and both shopping links without a pin or canvas loader.
+`src/components/home/WalkingOutfitSequence.tsx` reuses seven decoded boot poses, including both sides of the clip boundary, then prepares remaining images with four concurrent requests after readiness. Requested scroll poses get priority, and the component retains at most 48 decoded frames. It draws only when the pose or canvas dimensions change, caps DPR at 2, and cancels requests/observers on unmount. Desktop and mobile both use all 335 frames: all 175 outfit transformation frames first, followed by all 160 ghost mannequin walking frames. Mobile uses smaller 480px-high images without skipping poses. The clips meet with a direct cut and share one crop; no generated intermediate outfit is inserted. Reduced motion shows the final walking pose and both shopping links without a pin or canvas loader.
 
-Run `python scripts/process-walk.py` with Pillow and NumPy to reproduce the initial mattes from the supplied JPEGs. It sorts numeric filenames (the source skips 179), creates one shared crop, chroma-keys to genuine alpha and removes green spill. Then run `python scripts/optimize-assets.py --download-editorial` to generate local responsive photo variants and the smaller mobile WebP frames with exact alpha. Without the flag, the optimizer reuses originals cached under `.qa/editorial-originals`. Latest seven-pose light/dark proof: `docs/optimized-walk-proof.jpg`. **The source contains visible forearms and hands, which are preserved; it is not a fully invisible mannequin.**
+Install `python -m pip install -r scripts/frame-requirements.txt`, then run `python scripts/process-walk.py` with the two supplied source folders present: `dataaa/Mannequin_outfit_transforming_wh__20261010150210_frames` and `dataaa/Ghost_mannequin_walking_color_tr__20261010152817_frames`, in that order. The script sorts existing numeric filenames, including gaps, and exports transparent WebPs plus `src/lib/walk-sequence.json`. A checksum-verified [U2-Net model](https://github.com/xuebinqin/U-2-Net) supplies foreground seeds; OpenCV refines full-resolution edges. Green reflected light on trousers/shoes is corrected in RGB without punching holes in their alpha. Segmentation runs locally during preparation; neither the model nor its Python dependencies ship to the website. The official model is downloaded once into ignored `.qa` storage. New asset URLs prevent the previous incorrect mattes from being cached. Latest light/dark proof: `docs/outfit-sequence-alpha-proof.jpg`. **Source forearms and hands remain visible where present.** `python scripts/optimize-assets.py --download-editorial` separately generates responsive product/editorial photos; without the flag it reuses `.qa/editorial-originals`.
 
 GSAP contexts and Lenis ticker subscriptions are cleaned up. Dialogs render in a body portal so transformed cards cannot clip them. They handle Escape, focus trapping, focus restoration, and body scrolling. Navigation and forms have labels and visible focus states.
 
 Product cards have rounded surfaces, image gradients, wishlist controls, actual colour selection and a size-selected quick-add flow. The round testimonial carousel adapts the supplied Originkit geometry with perspective, rotation, drag momentum, keyboard navigation, pause controls and a static reduced-motion mode. Its quotes are explicitly labelled fictional samples. The black footer follows the supplied noth.in reference composition using original AWM copy and an oversized AWM wordmark.
 
-Current visual captures: [desktop hero](docs/awm-minimal-hero-desktop.jpg), [mobile hero](docs/awm-minimal-hero-mobile.jpg), [footer](docs/awm-refined-footer-desktop.jpg), and [testimonials](docs/awm-refined-testimonials-desktop.jpg).
+Current visual captures: [desktop hero](docs/awm-new-sequence-desktop.png), [mobile hero](docs/awm-new-sequence-mobile.png), [footer](docs/awm-refined-footer-desktop.jpg), and [testimonials](docs/awm-refined-testimonials-desktop.jpg).
 
 ## Image and font references
 
@@ -83,7 +83,9 @@ Space Grotesk, DM Sans and DM Serif Display are self-hosted Latin WOFF2 fonts fr
 | Walking bytes required before desktop reveal | 3.75 MB / 180 poses | 0.14 MB / 7 poses |
 | Walking bytes required before mobile reveal | 5.71 MB / 91 poses | 0.12 MB / 7 poses |
 
-The 3D gallery and its Framer Motion features load within 600px of the section. A fixed-height placeholder preserves its space. Store selectors reduce unnecessary card renders; image-driven ScrollTrigger refreshes are coalesced into one animation frame. Hashed JavaScript/font bundles support long-lived caching. `public/_headers` supplies caching rules for hosts supporting that format; other hosts need equivalent configuration. These figures measure asset bytes, not a guaranteed connection speed. Local production-preview readiness was observed at approximately 0.6–0.8 seconds; no throttled Lighthouse or deployed-server measurement was performed.
+The walking figures in this table record the earlier 180-frame optimization pass. The current replacement has 335 frames at both resolutions across two clips; current counts and bytes are recorded in `public/animations/awm-outfit-sequence-clean/manifest.json`. Its boot gate still prepares seven poses rather than the full sequence.
+
+The 3D gallery and its Framer Motion features load within 600px of the section. A fixed-height placeholder preserves its space. Store selectors reduce unnecessary card renders; image-driven ScrollTrigger refreshes are coalesced into one animation frame. Hashed JavaScript/font bundles support long-lived caching. `public/_headers` supplies caching rules for hosts supporting that format; other hosts need equivalent configuration. These figures measure asset bytes, not a guaranteed connection speed. Local production-preview readiness during that optimization pass was approximately 0.6–0.8 seconds; no throttled Lighthouse or deployed-server measurement was performed.
 
 ## Vercel
 
